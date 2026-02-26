@@ -4,7 +4,19 @@ namespace SvgMaker.Lib;
 
 public class SvgGenerator
 {
-    public static string GenerateRandomSvg(int width, int height)
+    // Use Lazy<T> for thread-safe, lazy initialization
+    private static readonly Lazy<SvgGenerator> _instance = 
+        new Lazy<SvgGenerator>(() => new SvgGenerator());
+
+    // Public property to access the single instance
+    public static SvgGenerator Instance => _instance.Value;
+
+    // 4. Make the constructor private so it cannot be instantiated externally
+    private SvgGenerator()
+    {
+        // Initialize existing collections or logic here
+    }
+    public string GenerateRandomSvg(int width, int height)
     {
         Random rand = new Random();
         StringBuilder svg = new StringBuilder();
@@ -28,7 +40,7 @@ public class SvgGenerator
         svg.Append("</svg>");
         return svg.ToString();
     }
-    public static string GenerateRandomRectanglesSvg(int count, int width, int height)
+    public string GenerateRandomRectanglesSvg(int count, int width, int height)
     {
         Random rand = new Random();
         StringBuilder svg = new StringBuilder();
@@ -45,7 +57,7 @@ public class SvgGenerator
         svg.Append("</svg>");
         return svg.ToString();
     }
-    public static string GenerateCirclesSvg(int count,int width, int height)
+    public string GenerateCirclesSvg(int count,int width, int height)
     {
         Random rand = new Random();
         StringBuilder svg = new StringBuilder();
@@ -61,7 +73,7 @@ public class SvgGenerator
         svg.Append("</svg>");
         return svg.ToString();
     }
-    public static string GenerateCircleSvg(int width, int height)
+    public string GenerateCircleSvg(int width, int height)
     {
         Random rand = new Random();
         StringBuilder svg = new StringBuilder();
@@ -72,7 +84,7 @@ public class SvgGenerator
         svg.Append("</svg>");
         return svg.ToString();
     }
-    public static string GenerateCircleSvg(int radius)
+    public string GenerateCircleSvg(int radius)
     {
         Random rand = new Random();
         StringBuilder svg = new StringBuilder();
@@ -83,7 +95,25 @@ public class SvgGenerator
         svg.Append("</svg>");
         return svg.ToString();
     }
-    private static void AppendRandomRectangleToSvg(StringBuilder svg,Random rand,int width, int height)
+    public string GenerateSvgText(string inputText)
+    {
+        // Define SVG width/height and text position
+        int width = 300;
+        int height = 80;
+
+        // Create the SVG string with the input text embedded
+        string svgContent = $@"
+        <svg xmlns=""http://www.w3.org/2000/svg"" width=""{width}"" height=""{height}"">
+            <rect x='{0}' y='{0}' width='{width}' height='{height}' fill='lightgreen' />
+            <text x=""10"" y=""30"" font-family=""Arial"" font-size=""24"" fill=""black"">
+                {System.Security.SecurityElement.Escape(inputText)}
+            </text>
+        </svg>";
+
+        return svgContent;
+    }
+
+    private void AppendRandomRectangleToSvg(StringBuilder svg,Random rand,int width, int height)
     {
         int rX = rand.Next(0, width - 50);
         int rY = rand.Next(0, height - 50);
@@ -93,7 +123,7 @@ public class SvgGenerator
 
         svg.Append($"<rect x='{rX}' y='{rY}' width='{rW}' height='{rH}' fill='{color}' />");
     }
-    private static void AppendRandomCircleToSvg(StringBuilder svg,Random rand,int width, int height)
+    private void AppendRandomCircleToSvg(StringBuilder svg,Random rand,int width, int height)
     {
         int cx = rand.Next(0, width);
         int cy = rand.Next(0, height);
