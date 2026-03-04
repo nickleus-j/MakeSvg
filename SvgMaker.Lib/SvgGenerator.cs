@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using QRCoder;
 
 namespace SvgMaker.Lib;
 
@@ -12,17 +13,15 @@ public class SvgGenerator
     public static SvgGenerator Instance => _instance.Value;
 
     // 4. Make the constructor private so it cannot be instantiated externally
-    private SvgGenerator()
-    {
-        // Initialize existing collections or logic here
-    }
+    private SvgGenerator() { }
+
     public string GenerateRandomSvg(int width, int height)
     {
         Random rand = new Random();
         StringBuilder svg = new StringBuilder();
 
         // SVG header
-        svg.Append($"<svg width='{width}' height='{height}' xmlns='http://www.w3.org'>");
+        svg.Append($"<svg width='{width}' height='{height}' xmlns='http://www.w3.org/2000/svg'>");
 
         // Add 5-10 random circles
         int numShapes = rand.Next(5, 11);
@@ -46,8 +45,9 @@ public class SvgGenerator
         StringBuilder svg = new StringBuilder();
         
         // Start SVG container
-        svg.Append($"<svg width='{width}' height='{height}' xmlns='http://www.w3.org'>");
+        svg.Append($"<svg width='{width}' height='{height}' xmlns='http://www.w3.org/2000/svg'>");
 
+        //Add randomly placed and sized rectangles
         for (int i = 0; i < count; i++)
         {
             AppendRandomRectangleToSvg(svg, rand, width, height);
@@ -63,7 +63,7 @@ public class SvgGenerator
         StringBuilder svg = new StringBuilder();
 
         // SVG header
-        svg.Append($"<svg width='{width}' height='{height}' xmlns='http://www.w3.org'>");
+        svg.Append($"<svg width='{width}' height='{height}' xmlns='http://www.w3.org/2000/svg'>");
 
         for (int i = 0; i < count; i++)
         {
@@ -79,7 +79,7 @@ public class SvgGenerator
         StringBuilder svg = new StringBuilder();
         string color = $"#{rand.Next(0x1000000):X6}"; // Random hex color
         // SVG header
-        svg.Append($"<svg width='{width}' height='{height}' xmlns='http://www.w3.org'>");
+        svg.Append($"<svg width='{width}' height='{height}' xmlns='http://www.w3.org/2000/svg'>");
         svg.Append($"<circle cx='{width/2}' cy='{height/2}' r='{width/2}' fill='{color}' fill-opacity='{100.0}' />");
         svg.Append("</svg>");
         return svg.ToString();
@@ -90,7 +90,7 @@ public class SvgGenerator
         StringBuilder svg = new StringBuilder();
         string color = $"#{rand.Next(0x1000000):X6}"; // Random hex color
         // SVG header
-        svg.Append($"<svg width='{radius*2}' height='{radius*2}' xmlns='http://www.w3.org'>");
+        svg.Append($"<svg width='{radius*2}' height='{radius*2}' xmlns='http://www.w3.org/2000/svg'>");
         svg.Append($"<circle cx='{radius}' cy='{radius}' r='{radius}' fill='{color}' fill-opacity='{100.0}' />");
         svg.Append("</svg>");
         return svg.ToString();
@@ -99,7 +99,7 @@ public class SvgGenerator
     {
         // Define SVG width/height and text position
         int width = 300;
-        int height = 80;
+        int height = 100;
 
         // Create the SVG string with the input text embedded
         string svgContent = $@"
@@ -112,7 +112,14 @@ public class SvgGenerator
 
         return svgContent;
     }
-
+    public string GetQrSvgOfUrl(string givenUrl,int pixelsPerModule=10)
+    {
+        QRCodeGenerator qrGenerator = new QRCodeGenerator();
+        QRCodeData qrCodeData = qrGenerator.CreateQrCode(givenUrl, QRCodeGenerator.ECCLevel.Q);
+        SvgQRCode qrCode = new SvgQRCode(qrCodeData);
+        string qrCodeAsSvg = qrCode.GetGraphic(pixelsPerModule);
+        return qrCodeAsSvg;
+    }
     private void AppendRandomRectangleToSvg(StringBuilder svg,Random rand,int width, int height)
     {
         int rX = rand.Next(0, width - 50);

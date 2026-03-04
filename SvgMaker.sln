@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SvgMaker", "SvgMaker\SvgMak
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SvgMaker.Lib", "SvgMaker.Lib\SvgMaker.Lib.csproj", "{74E9185D-0838-4D51-97FA-58EF13A68FB8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SvgMaker.Lib.Tests", "SvgMaker.Lib.Tests\SvgMaker.Lib.Tests.csproj", "{33714F2C-7C7E-4E82-85CC-B4F7E6946A37}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{74E9185D-0838-4D51-97FA-58EF13A68FB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74E9185D-0838-4D51-97FA-58EF13A68FB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74E9185D-0838-4D51-97FA-58EF13A68FB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33714F2C-7C7E-4E82-85CC-B4F7E6946A37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33714F2C-7C7E-4E82-85CC-B4F7E6946A37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33714F2C-7C7E-4E82-85CC-B4F7E6946A37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33714F2C-7C7E-4E82-85CC-B4F7E6946A37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

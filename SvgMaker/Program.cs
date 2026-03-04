@@ -13,7 +13,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 var svgGen = SvgGenerator.Instance;
-app.MapGet("/", () => "Hello There!");
+app.MapGet("/", () => "Hello There! try /random");
 app.MapGet("/random", () => 
     Results.Content(svgGen.GenerateRandomSvg(330,250)
         ,"image/svg+xml; charset=utf-8"));
@@ -27,6 +27,8 @@ app.MapGet("/circle/{width}/{height}", (int width, int height) =>
     Results.Content(svgGen.GenerateCircleSvg(width,height),"image/svg+xml; charset=utf-8"));
 app.MapGet("/circle/{radius}", (int radius) => 
     Results.Content(svgGen.GenerateCircleSvg(radius),"image/svg+xml; charset=utf-8"));
-app.MapGet("/read/{text}", (string text) => 
+app.MapGet("/write/{text}", (string text) => 
     Results.Content(svgGen.GenerateSvgText(text),"image/svg+xml; charset=utf-8"));
+app.MapGet("/qr/", (string q) => 
+    Results.Content(svgGen.GetQrSvgOfUrl(q),"image/svg+xml; charset=utf-8"));
 app.Run();
