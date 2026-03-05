@@ -34,7 +34,7 @@ jobs:
           # This points to the subdirectory where your Dockerfile/source is
           context: .
           # If your Dockerfile is named differently or elsewhere, uncomment below:
-          file: ./SvgMaker/Dockerfile 
+          file: ./Dockerfile 
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
