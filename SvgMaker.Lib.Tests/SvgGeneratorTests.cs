@@ -1,3 +1,4 @@
+using System;
 using JetBrains.Annotations;
 using SvgMaker.Lib;
 using Xunit;
@@ -243,5 +244,126 @@ public class SvgGeneratorTests
         Assert.DoesNotContain("<circle", result);
         Assert.Contains("<svg", result);
         Assert.Contains("</svg>", result);
+    }
+    [Fact]
+    public void GeneratePolygonSvg_WithValidTriangle_ReturnsValidSvgString()
+    {
+        var generator = SvgGenerator.Instance;
+        var result = generator.GeneratePolygonSvg(3);
+
+        Assert.NotNull(result);
+        Assert.StartsWith("<svg", result);
+        Assert.EndsWith("</svg>", result);
+        Assert.Contains("<polygon", result);
+    }
+
+    [Theory]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(6)]
+    [InlineData(8)]
+    [InlineData(12)]
+    [InlineData(20)]
+    public void GeneratePolygonSvg_WithValidSides_ReturnsValidSvg(int sides)
+    {
+        var generator = SvgGenerator.Instance;
+        var result = generator.GeneratePolygonSvg(sides);
+
+        Assert.NotNull(result);
+        Assert.Contains("xmlns=\"http://www.w3.org/2000/svg\"", result);
+        Assert.Contains("viewBox=\"0 0 400 400\"", result);
+    }
+
+    [Theory]
+    [InlineData(3)]
+    [InlineData(5)]
+    [InlineData(10)]
+    [InlineData(20)]
+    public void GeneratePolygonSvg_WithValidSides_ContainsCorrectNumberOfPoints(int sides)
+    {
+        var generator = SvgGenerator.Instance;
+        var result = generator.GeneratePolygonSvg(sides);
+
+        var pointMatches = Regex.Matches(result, @"\d+\.\d+,\d+\.\d+");
+        Assert.Equal(sides, pointMatches.Count);
+    }
+
+    [Fact]
+    public void GeneratePolygonSvg_WithSquare_ContainsExpectedAttributes()
+    {
+        var generator = SvgGenerator.Instance;
+        var result = generator.GeneratePolygonSvg(4);
+
+        Assert.Contains("fill=\"#34dba8\"", result);
+        Assert.Contains("stroke=\"#2c5500\"", result);
+        Assert.Contains("stroke-width=\"2\"", result);
+    }
+
+    [Theory]
+    [InlineData(2)]
+    [InlineData(1)]
+    [InlineData(0)]
+    [InlineData(-5)]
+    public void GeneratePolygonSvg_WithSidesLessThanThree_ThrowsArgumentException(int sides)
+    {
+        var generator = SvgGenerator.Instance;
+        var exception = Assert.Throws<ArgumentException>(() => generator.GeneratePolygonSvg(sides));
+
+        Assert.Contains("Sides must be between 3 and 20.", exception.Message);
+        Assert.Equal("sides", exception.ParamName);
+    }
+
+    [Theory]
+    [InlineData(21)]
+    [InlineData(25)]
+    [InlineData(100)]
+    [InlineData(int.MaxValue)]
+    public void GeneratePolygonSvg_WithSidesGreaterThanTwenty_ThrowsArgumentException(int sides)
+    {
+        var generator = SvgGenerator.Instance;
+        var exception = Assert.Throws<ArgumentException>(() => generator.GeneratePolygonSvg(sides));
+
+        Assert.Contains("Sides must be between 3 and 20.", exception.Message);
+        Assert.Equal("sides", exception.ParamName);
+    }
+
+    [Fact]
+    public void GeneratePolygonSvg_WithTriangle_PointsAreWithinViewBox()
+    {
+        var generator = SvgGenerator.Instance;
+        var result = generator.GeneratePolygonSvg(3);
+
+        var pointMatches = Regex.Matches(result, @"(\d+\.\d+),(\d+\.\d+)");
+        foreach (Match match in pointMatches)
+        {
+            double x = double.Parse(match.Groups[1].Value);
+            double y = double.Parse(match.Groups[2].Value);
+
+            Assert.InRange(x, 0, 400);
+            Assert.InRange(y, 0, 400);
+        }
+    }
+
+    [Theory]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(6)]
+    public void GeneratePolygonSvg_WithValidSides_DoesNotThrowException(int sides)
+    {
+        var generator = SvgGenerator.Instance;
+        var exception = Record.Exception(() => generator.GeneratePolygonSvg(sides));
+
+        Assert.Null(exception);
+    }
+
+
+    [Fact]
+    public void GeneratePolygonSvg_WithDifferentSides_ReturnsDifferentSvgs()
+    {
+        var generator = SvgGenerator.Instance;
+        var triangle = generator.GeneratePolygonSvg(3);
+        var square = generator.GeneratePolygonSvg(4);
+
+        Assert.NotEqual(triangle, square);
     }
 }

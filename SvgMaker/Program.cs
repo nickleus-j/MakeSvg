@@ -41,4 +41,6 @@ app.MapGet("/write/{text}", (string text) =>
     Results.Content(svgGen.GenerateSvgText(text),"image/svg+xml; charset=utf-8"));
 app.MapGet("/qr/", (string q) => 
     Results.Content(svgGen.GetQrSvgOfUrl(q),"image/svg+xml; charset=utf-8"));
+app.MapGet("/polygon/{sideCount:int}", (int sideCount) => 
+    Results.Content(svgGen.GeneratePolygonSvg(sideCount),"image/svg+xml; charset=utf-8"));
 app.Run();

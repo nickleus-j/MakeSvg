@@ -139,4 +139,32 @@ public class SvgGenerator
         int opacity = rand.Next(30, 100);
         svg.Append($"<circle cx='{cx}' cy='{cy}' r='{r}' fill='{color}' fill-opacity='{opacity/100.0}' />");
     }
+    public string GeneratePolygonSvg(int sides)
+    {
+        if (sides < 3 || sides > 20)
+            throw new ArgumentException("Sides must be between 3 and 20.", nameof(sides));
+
+        const int centerX = 150;
+        const int centerY = 150;
+        const int radius = 100;
+
+        var points = new List<string>();
+        double angleStep = 360.0 / sides;
+
+        for (int i = 0; i < sides; i++)
+        {
+            double angle = i * angleStep * Math.PI / 180.0;
+            double x = centerX + radius * Math.Cos(angle);
+            double y = centerY + radius * Math.Sin(angle);
+            points.Add($"{x:F2},{y:F2}");
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.Append(@"<svg xmlns=""http://www.w3.org/2000/svg"" viewBox=""0 0 400 400"">
+          <polygon points=""");
+        sb.Append(string.Join(" ", points));
+        sb.AppendLine("\" fill=\"#34dba8\" stroke=\"#2c5500\" stroke-width=\"2\"/>");
+        sb.Append("</svg>");
+        return sb.ToString();
+    }
+
 }
