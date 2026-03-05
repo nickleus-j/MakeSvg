@@ -32,9 +32,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           # This points to the subdirectory where your Dockerfile/source is
-          context: ./SvgMaker
+          context: .
           # If your Dockerfile is named differently or elsewhere, uncomment below:
-          # file: ./SvgMaker/Dockerfile 
+          file: ./SvgMaker/Dockerfile 
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
