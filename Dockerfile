@@ -10,7 +10,6 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["SvgMaker/SvgMaker.csproj", "SvgMaker/"]
-COPY ["SvgMaker.Lib/SvgMaker.Lib.csproj", "SvgMaker.Lib/"]
 RUN dotnet restore "./SvgMaker/SvgMaker.csproj"
 COPY . .
 WORKDIR "/src/SvgMaker"
