@@ -143,14 +143,12 @@ public class SvgGenerator
     {
         if (sides < 3 || sides > 20)
             throw new ArgumentException("Sides must be between 3 and 20.", nameof(sides));
-
         const int centerX = 150;
         const int centerY = 150;
         const int radius = 100;
 
         var points = new List<string>();
         double angleStep = 360.0 / sides;
-
         for (int i = 0; i < sides; i++)
         {
             double angle = i * angleStep * Math.PI / 180.0;
@@ -166,5 +164,32 @@ public class SvgGenerator
         sb.Append("</svg>");
         return sb.ToString();
     }
+    public string GeneratePolygonSvg(int sides,int radius)
+    {
+        if (sides < 3 || sides > 20)
+            throw new ArgumentException("Sides must be between 3 and 20.", nameof(sides));
 
+        Random rand = new Random();
+         int centerX = radius/2;
+         int centerY = radius+5;
+         string color = $"#{rand.Next(0x1000000):X6}"; // Random hex color
+
+        var points = new List<string>();
+        double angleStep = 360.0 / sides;
+
+        for (int i = 0; i < sides; i++)
+        {
+            double angle = i * angleStep * Math.PI / 180.0;
+            double x = centerX + radius * Math.Cos(angle);
+            double y = centerY + radius * Math.Sin(angle);
+            points.Add($"{x:F2},{y:F2}");
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.Append(@"<svg xmlns=""http://www.w3.org/2000/svg"" viewBox=""0 0 400 400"">
+          <polygon points=""");
+        sb.Append(string.Join(" ", points));
+        sb.AppendLine($"\" fill=\"{color}\" stroke=\"#888\" stroke-width=\"2\"/>");
+        sb.Append("</svg>");
+        return sb.ToString();
+    }
 }
