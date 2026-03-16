@@ -139,6 +139,28 @@ public class SvgGenerator
         int opacity = rand.Next(30, 100);
         svg.Append($"<circle cx='{cx}' cy='{cy}' r='{r}' fill='{color}' fill-opacity='{opacity/100.0}' />");
     }
+    private void AppendPolygonToSvg(StringBuilder sb,Random rand,int sides,int radius,int displacementX=0,int displacementY=0)
+    {
+        if (sides < 3 || sides > 20)
+            throw new ArgumentException("Sides must be between 3 and 20.", nameof(sides));
+        int centerX = (radius/2)+displacementX;
+        int centerY = (radius+5)+displacementY;
+
+        var points = new List<string>();
+        double angleStep = 360.0 / sides;
+        for (int i = 0; i < sides; i++)
+        {
+            double angle = i * angleStep * Math.PI / 180.0;
+            double x = centerX + radius * Math.Cos(angle);
+            double y = centerY + radius * Math.Sin(angle);
+            points.Add($"{x:F2},{y:F2}");
+        }
+        int r = rand.Next(10, 50);
+        string color = $"#{rand.Next(0x1000000):X6}"; // Random hex color
+        sb.Append(@"<polygon points=""");
+        sb.Append(string.Join(" ", points));
+        sb.AppendLine($"\" fill=\"{color}\" stroke=\"#888\" stroke-width=\"2\"/>");
+    }
     public string GeneratePolygonSvg(int sides)
     {
         if (sides < 3 || sides > 20)
@@ -164,6 +186,21 @@ public class SvgGenerator
         sb.Append("</svg>");
         return sb.ToString();
     }
+    public string GeneratePolygonsSvg(int count,int sides,int radius)
+    {
+        if (sides < 3 || sides > 20)
+            throw new ArgumentException("Sides must be between 3 and 20.", nameof(sides));
+
+        StringBuilder sb = new StringBuilder();
+        sb.Append(@"<svg xmlns=""http://www.w3.org/2000/svg"" viewBox=""0 0 400 400"">");
+        for (int i = 0; i < count; i++)
+        {
+            AppendPolygonToSvg(sb, new Random(), sides, radius,i*10,i*(radius/2));
+        }
+        
+        sb.Append("</svg>");
+        return sb.ToString();
+    }
     public string GeneratePolygonSvg(int sides,int radius)
     {
         if (sides < 3 || sides > 20)
@@ -185,8 +222,7 @@ public class SvgGenerator
             points.Add($"{x:F2},{y:F2}");
         }
         StringBuilder sb = new StringBuilder();
-        sb.Append(@"<svg xmlns=""http://www.w3.org/2000/svg"" viewBox=""0 0 400 400"">
-          <polygon points=""");
+        sb.Append(@"<svg xmlns=""http://www.w3.org/2000/svg"" viewBox=""0 0 400 400""><polygon points=""");
         sb.Append(string.Join(" ", points));
         sb.AppendLine($"\" fill=\"{color}\" stroke=\"#888\" stroke-width=\"2\"/>");
         sb.Append("</svg>");
