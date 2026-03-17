@@ -39,6 +39,29 @@ public class SvgGenerator
         svg.Append("</svg>");
         return svg.ToString();
     }
+    public string GenerateRectangleSvg(int width, int height)
+    {
+        Random rand = new Random();
+        StringBuilder svg = new StringBuilder();
+        int currentX = 0, currentY = 0,squareLength=75;
+        // Start SVG container
+        svg.Append($"<svg width='{width}' height='{height}' xmlns='http://www.w3.org/2000/svg'>");
+        AppendRectangleToSvg(svg, rand, width, height,currentX,currentY);
+        do
+        {
+            while (currentX < width )
+            {
+                AppendRectangleToSvg(svg, rand, squareLength, squareLength,currentX,currentY);
+                currentX+= squareLength;
+            }
+            currentX = 0;
+            currentY += squareLength;
+        } while (currentY < height);
+
+        // Close SVG container
+        svg.Append("</svg>");
+        return svg.ToString();
+    }
     public string GenerateRandomRectanglesSvg(int count, int width, int height)
     {
         Random rand = new Random();
@@ -129,6 +152,11 @@ public class SvgGenerator
         string color = $"#{rand.Next(0x1000000):X6}"; // Random hex color
 
         svg.Append($"<rect x='{rX}' y='{rY}' width='{rW}' height='{rH}' fill='{color}' />");
+    }
+    private void AppendRectangleToSvg(StringBuilder svg,Random rand,int width, int height,int x,int y)
+    {
+        string color = $"#{rand.Next(0x1000000):X6}"; // Random hex color
+        svg.AppendLine($"<rect x='{x}' y='{y}' width='{width}' height='{height}' fill='{color}' />");
     }
     private void AppendRandomCircleToSvg(StringBuilder svg,Random rand,int width, int height)
     {

@@ -42,6 +42,12 @@ app.MapGet("/write/{text}", (string text) =>
     Results.Content(svgGen.GenerateSvgText(text),"image/svg+xml; charset=utf-8"));
 app.MapGet("/qr/", (string q) => 
     Results.Content(svgGen.GetQrSvgOfUrl(q),"image/svg+xml; charset=utf-8"));
+app.MapGet("/grid", () => 
+    Results.Content(svgGen.GenerateRectangleSvg(300,300)
+        ,"image/svg+xml; charset=utf-8"));
+app.MapGet("/grid/{width:int}/{height:int}", (int width, int height) => 
+    Results.Content(svgGen.GenerateRectangleSvg(width,height)
+        ,"image/svg+xml; charset=utf-8"));
 app.MapGet("/polygon", () => 
     Results.Content(svgGen.GeneratePolygonsSvg(3,7,50)
         ,"image/svg+xml; charset=utf-8"));
