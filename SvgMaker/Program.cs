@@ -48,6 +48,9 @@ app.MapGet("/grid", () =>
 app.MapGet("/grid/{width:int}/{height:int}", (int width, int height) => 
     Results.Content(svgGen.GenerateRectangleSvg(width,height)
         ,"image/svg+xml; charset=utf-8"));
+app.MapGet("/onion", () => 
+    Results.Content(svgGen.GenerateOnionCirclesSvg(250)
+        ,"image/svg+xml; charset=utf-8"));
 app.MapGet("/polygon", () => 
     Results.Content(svgGen.GeneratePolygonsSvg(3,7,50)
         ,"image/svg+xml; charset=utf-8"));
@@ -55,4 +58,6 @@ app.MapGet("/polygon/{sideCount:int}", (int sideCount) =>
     Results.Content(svgGen.GeneratePolygonSvg(sideCount),"image/svg+xml; charset=utf-8"));
 app.MapGet("/polygon/{sideCount:int}/{radius:int}", (int sideCount,int radius) => 
     Results.Content(svgGen.GeneratePolygonSvg(sideCount,radius),"image/svg+xml; charset=utf-8"));
+app.MapGet("/polygons/{count:int}", (int count) =>
+    Results.Content(svgGen.GeneratePolygonsSvg(count, 6, 50),"image/svg+xml; charset=utf-8"));
 app.Run();
