@@ -223,12 +223,27 @@ public class SvgGenerator
     {
         StringBuilder sb = new StringBuilder();
         Random rand = new Random();
-        int incrementingRadius = 10;
+        int decrementingRadius = maxRadius;
         sb.Append($@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""{maxRadius*20}"" height=""{maxRadius*20}"">");
-        while (incrementingRadius < maxRadius)
+        while (decrementingRadius >=10)
         {
-            AppendCircleToSvg(sb, rand, incrementingRadius, (maxRadius)+5,maxRadius);
-            incrementingRadius += 10;
+            AppendCircleToSvg(sb, rand, decrementingRadius, (maxRadius)+5,maxRadius+3);
+            decrementingRadius -= 10;
+        }
+        
+        sb.Append("</svg>");
+        return sb.ToString();
+    }
+    public string GenerateOnionCirclesSvg(int layers,int maxRadius)
+    {
+        StringBuilder sb = new StringBuilder();
+        Random rand = new Random();
+        int decrementingRadius = maxRadius,decrement=maxRadius>=layers?maxRadius/layers:layers/maxRadius;
+        sb.Append($@"<svg xmlns=""http://www.w3.org/2000/svg"" width=""{maxRadius*20}"" height=""{maxRadius*20}"">");
+        while (decrementingRadius>0)
+        {
+            AppendCircleToSvg(sb, rand, decrementingRadius, (maxRadius)+5,maxRadius+3);
+            decrementingRadius -= decrement;
         }
         
         sb.Append("</svg>");

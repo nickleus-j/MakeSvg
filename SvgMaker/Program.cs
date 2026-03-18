@@ -49,7 +49,10 @@ app.MapGet("/grid/{width:int}/{height:int}", (int width, int height) =>
     Results.Content(svgGen.GenerateRectangleSvg(width,height)
         ,"image/svg+xml; charset=utf-8"));
 app.MapGet("/onion", () => 
-    Results.Content(svgGen.GenerateOnionCirclesSvg(250)
+    Results.Content(svgGen.GenerateOnionCirclesSvg(100)
+        ,"image/svg+xml; charset=utf-8"));
+app.MapGet("/onion/{layers:int}", (int layers) => 
+    Results.Content(svgGen.GenerateOnionCirclesSvg(layers,150)
         ,"image/svg+xml; charset=utf-8"));
 app.MapGet("/polygon", () => 
     Results.Content(svgGen.GeneratePolygonsSvg(3,7,50)
