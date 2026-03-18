@@ -42,6 +42,8 @@ app.MapGet("/write/{text}", (string text) =>
     Results.Content(svgGen.GenerateSvgText(text),"image/svg+xml; charset=utf-8"));
 app.MapGet("/qr/", (string q) => 
     Results.Content(svgGen.GetQrSvgOfUrl(q),"image/svg+xml; charset=utf-8"));
+app.MapGet("/dart/{radius}", (double radius) => 
+    Results.Content(svgGen.GenerateDartBoard(radius),"image/svg+xml; charset=utf-8"));
 app.MapGet("/grid", () => 
     Results.Content(svgGen.GenerateRectangleSvg(300,300)
         ,"image/svg+xml; charset=utf-8"));

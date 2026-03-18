@@ -167,6 +167,92 @@ public class SvgGenerator
             svg.AppendLine($@"<polygon points=""{points}"" fill=""{GetRandomColor()}"" stroke=""#888"" stroke-width=""2""/>");
         });
     }
+    public string GenerateDartBoard(double radius)
+    {
+        if (radius <= 0)
+            throw new ArgumentException("Radius must be greater than 0", nameof(radius));
+
+        double center = radius;
+        double outerBull = radius * 0.05;
+        double innerBull = radius * 0.02;
+        double innerRing = radius * 0.35;
+        double outerRing = radius * 0.42;
+        double doubleRing = radius * 0.95;
+
+        var svg = new System.Text.StringBuilder();
+        
+        svg.AppendLine($"<svg width=\"{radius * 2}\" height=\"{radius * 2}\" xmlns=\"http://www.w3.org/2000/svg\">");
+        svg.AppendLine($"  <defs>");
+        svg.AppendLine($"    <style>");
+        svg.AppendLine($"      .dartboard-black {{ fill: #1a1a1a; }}");
+        svg.AppendLine($"      .dartboard-white {{ fill: #ffffff; }}");
+        svg.AppendLine($"      .dartboard-red {{ fill: #cc0000; }}");
+        svg.AppendLine($"      .dartboard-bull {{ fill: #cc0000; }}");
+        svg.AppendLine($"    </style>");
+        svg.AppendLine($"  </defs>");
+
+        // Outer circle background
+        svg.AppendLine($"  <circle cx=\"{center}\" cy=\"{center}\" r=\"{radius}\" class=\"dartboard-black\"/>");
+
+        // Generate 20 dart board segments
+        int[] scores = { 20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5 };
+        
+        for (int i = 0; i < 20; i++)
+        {
+            double startAngle = (i * 18 - 90) * Math.PI / 180;
+            double endAngle = ((i + 1) * 18 - 90) * Math.PI / 180;
+            
+            string color = i % 2 == 0 ? "dartboard-black" : "dartboard-white";
+            
+            // Outer single ring
+            DrawAnnularSegment(svg, center, startAngle, endAngle, innerRing, outerRing, color);
+            
+            // Outer double ring
+            color = i % 2 == 0 ? "dartboard-black" : "dartboard-white";
+            DrawAnnularSegment(svg, center, startAngle, endAngle, doubleRing, radius, color);
+            
+            // Inner single ring
+            color = i % 2 == 0 ? "dartboard-white" : "dartboard-black";
+            DrawAnnularSegment(svg, center, startAngle, endAngle, innerBull * 2, innerRing, color);
+            
+            // Triple ring
+            color = i % 2 == 0 ? "dartboard-red" : "dartboard-white";
+            DrawAnnularSegment(svg, center, startAngle, endAngle, radius * 0.20, radius * 0.23, color);
+        }
+
+        // Outer bull (red ring)
+        svg.AppendLine($"  <circle cx=\"{center}\" cy=\"{center}\" r=\"{outerBull}\" class=\"dartboard-red\"/>");
+        
+        // Inner bull (black center)
+        svg.AppendLine($"  <circle cx=\"{center}\" cy=\"{center}\" r=\"{innerBull}\" class=\"dartboard-black\"/>");
+
+        svg.AppendLine("</svg>");
+        
+        return svg.ToString();
+    }
+
+    private void DrawAnnularSegment(System.Text.StringBuilder svg, double center, 
+        double startAngle, double endAngle, double innerRadius, double outerRadius, string cssClass)
+    {
+        double x1Inner = center + innerRadius * Math.Cos(startAngle);
+        double y1Inner = center + innerRadius * Math.Sin(startAngle);
+        double x2Inner = center + innerRadius * Math.Cos(endAngle);
+        double y2Inner = center + innerRadius * Math.Sin(endAngle);
+        
+        double x1Outer = center + outerRadius * Math.Cos(startAngle);
+        double y1Outer = center + outerRadius * Math.Sin(startAngle);
+        double x2Outer = center + outerRadius * Math.Cos(endAngle);
+        double y2Outer = center + outerRadius * Math.Sin(endAngle);
+        
+        int largeArc = (endAngle - startAngle) > Math.PI ? 1 : 0;
+        
+        string pathData = $"M {x1Outer} {y1Outer} " +
+                          $"A {outerRadius} {outerRadius} 0 {largeArc} 1 {x2Outer} {y2Outer} " +
+                          $"L {x2Inner} {y2Inner} " +
+                          $"A {innerRadius} {innerRadius} 0 {largeArc} 0 {x1Inner} {y1Inner} Z";
+        
+        svg.AppendLine($"  <path d=\"{pathData}\" class=\"{cssClass}\"/>");
+    }
 
     // ==========================================
     // PRIVATE HELPER METHODS (Streamlined)
