@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Generator API Guide</title>
+    <style>
+        :root {
+            --bg: #f8f9fa;
+            --text: #212529;
+            --accent: #007bff;
+            --border: #dee2e6;
+            --code-bg: #e9ecef;
+        }
+        body { font-family: system-ui, -apple-system, sans-serif; line-height: 1.6; color: var(--text); background: var(--bg); margin: 0; display: flex; }
+
+        /* Sidebar Navigation */
+        nav { width: 250px; height: 100vh; background: white; border-right: 1px solid var(--border); position: sticky; top: 0; padding: 20px; }
+        nav h1 { font-size: 1.2rem; margin-bottom: 20px; color: var(--accent); }
+        nav ul { list-style: none; padding: 0; }
+        nav li { margin-bottom: 10px; }
+        nav a { text-decoration: none; color: var(--text); font-weight: 500; }
+        nav a:hover { color: var(--accent); }
+
+        /* Main Content */
+        main { flex: 1; padding: 40px; max-width: 900px; }
+        section { margin-bottom: 60px; }
+        h2 { border-bottom: 2px solid var(--accent); padding-bottom: 5px; }
+
+        /* API Cards */
+        .api-card { background: white; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
+        .api-header { padding: 15px; background: var(--code-bg); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .method { background: #28a745; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-right: 10px; }
+        .path { font-family: 'Courier New', monospace; font-weight: bold; }
+
+        .api-body { padding: 15px; display: flex; gap: 20px; }
+        .api-info { flex: 1; }
+        .api-preview { width: 150px; height: 150px; border: 1px dashed var(--border); display: flex; align-items: center; justify-content: center; background: #fff; }
+        .api-preview img { max-width: 100%; max-height: 100%; }
+
+        code { background: var(--code-bg); padding: 2px 5px; border-radius: 4px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <h1>SVG API Docs</h1>
+    <ul>
+        <li><a href="#random">Random & Basic</a></li>
+        <li><a href="#shapes">Shapes & Grids</a></li>
+        <li><a href="#geometry">Advanced Geometry</a></li>
+        <li><a href="#utility">Utilities (QR/Text)</a></li>
+    </ul>
+</nav>
+
+<main>
+    <header>
+        <h1>Minimal SVG Generator</h1>
+        <p>A lightweight API for generating dynamic SVG assets on the fly. Use these endpoints as <code>src</code> attributes for your images.</p>
+    </header>
+
+    <section id="random">
+        <h2>Random Generation</h2>
+
+        <div class="api-card">
+            <div class="api-header">
+                <span><span class="method">GET</span><span class="path">/random</span></span>
+            </div>
+            <div class="api-body">
+                <div class="api-info">
+                    <p>Generates a random SVG with default dimensions (330x250).</p>
+                    <p>Example: <a href="/random">/random</a></p>
+                </div>
+                <div class="api-preview">
+                    <img src="/random" alt="Random SVG Preview">
+                </div>
+            </div>
+        </div>
+
+        <div class="api-card">
+            <div class="api-header">
+                <span><span class="method">GET</span><span class="path">/random/{width}/{height}</span></span>
+            </div>
+            <div class="api-body">
+                <div class="api-info">
+                    <p>Generates a random SVG with custom dimensions.</p>
+                    <code>/random/500/200</code>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="shapes">
+        <h2>Shapes & Grids</h2>
+
+        <div class="api-card">
+            <div class="api-header">
+                <span><span class="method">GET</span><span class="path">/grid/{width}/{height}</span></span>
+            </div>
+            <div class="api-body">
+                <div class="api-info">
+                    <p>Generates a structured rectangular grid.</p>
+                    <p>Example: <code>/grid/200/200</code></p>
+                </div>
+                <div class="api-preview">
+                    <img src="/grid/200/200" alt="Grid Preview">
+                </div>
+            </div>
+        </div>
+
+        <div class="api-card">
+            <div class="api-header">
+                <span><span class="method">GET</span><span class="path">/circles/{width}/{height}</span></span>
+            </div>
+            <div class="api-body">
+                <div class="api-info">
+                    <p>Returns a canvas populated with 10 random circles.</p>
+                </div>
+                <div class="api-preview">
+                    <img src="/circles/150/150" alt="Circles Preview">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="geometry">
+        <h2>Advanced Geometry</h2>
+
+        <div class="api-card">
+            <div class="api-header">
+                <span><span class="method">GET</span><span class="path">/polygon/{sideCount}/{radius}</span></span>
+            </div>
+            <div class="api-body">
+                <div class="api-info">
+                    <p>Generates a specific polygon. Try 3 for a triangle, 6 for a hexagon.</p>
+                    <code>/polygon/6/80</code>
+                </div>
+                <div class="api-preview">
+                    <img src="/polygon/6/50" alt="Polygon Preview">
+                </div>
+            </div>
+        </div>
+
+        <div class="api-card">
+            <div class="api-header">
+                <span><span class="method">GET</span><span class="path">/onion/{layers}</span></span>
+            </div>
+            <div class="api-body">
+                <div class="api-info">
+                    <p>Generates concentric "onion" circles.</p>
+                    <code>/onion/12</code>
+                </div>
+                <div class="api-preview">
+                    <img src="/onion/10" alt="Onion Preview">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="utility">
+        <h2>Utilities</h2>
+
+        <div class="api-card">
+            <div class="api-header">
+                <span><span class="method">GET</span><span class="path">/qr?q={url}</span></span>
+            </div>
+            <div class="api-body">
+                <div class="api-info">
+                    <p>Generates a QR code for the provided URL string.</p>
+                    <code>/qr?q=https://google.com</code>
+                </div>
+                <div class="api-preview">
+                    <img src="/qr?q=https://google.com" alt="Google">
+                </div>
+            </div>
+        </div>
+
+        <div class="api-card">
+            <div class="api-header">
+                <span><span class="method">GET</span><span class="path">/write/{text}</span></span>
+            </div>
+            <div class="api-body">
+                <div class="api-info">
+                    <p>Renders the provided text as an SVG graphic.</p>
+                    <code>/write/Hello%20World</code>
+                </div>
+                <div class="api-preview">
+                    <img src="/write/Hello%20World" alt="Onion Preview">
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>
