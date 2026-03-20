@@ -19,6 +19,7 @@
         nav h1 { font-size: 1.2rem; margin-bottom: 20px; color: var(--accent); }
         nav ul { list-style: none; padding: 0; }
         nav li { margin-bottom: 10px; }
+        nav li:hover { background: #d5d5d5;  }
         nav a { text-decoration: none; color: var(--text); font-weight: 500; }
         nav a:hover { color: var(--accent); }
 
@@ -30,7 +31,7 @@
         /* API Cards */
         .api-card { background: white; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
         .api-header { padding: 15px; background: var(--code-bg); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .method { background: #28a745; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-right: 10px; }
+        .method { background: #28a745; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; margin-right: 10px; }
         .path { font-family: 'Courier New', monospace; font-weight: bold; }
 
         .api-body { padding: 15px; display: flex; gap: 20px; }
@@ -38,7 +39,7 @@
         .api-preview { width: 150px; height: 150px; border: 1px dashed var(--border); display: flex; align-items: center; justify-content: center; background: #fff; }
         .api-preview img { max-width: 100%; max-height: 100%; }
 
-        code { background: var(--code-bg); padding: 2px 5px; border-radius: 4px; font-size: 0.9rem; }
+        code { background: var(--code-bg); padding: 2px 5px; border-radius: 4px; font-size: 0.75rem; }
     </style>
 </head>
 <body>
@@ -84,7 +85,10 @@
             <div class="api-body">
                 <div class="api-info">
                     <p>Generates a random SVG with custom dimensions.</p>
-                    <code>/random/500/200</code>
+                    <code>/random/200/200</code>
+                </div>
+                <div class="api-preview">
+                    <img src="/random/200/200" alt="Grid Preview">
                 </div>
             </div>
         </div>
@@ -121,11 +125,38 @@
                 </div>
             </div>
         </div>
+        <div class="api-card">
+            <div class="api-header">
+                <span><span class="method">GET</span><span class="path">/rectangle/{width}/{height}</span></span>
+            </div>
+            <div class="api-body">
+                <div class="api-info">
+                    <p>Generates a structured rectangular grid.</p>
+                    <p>Example: <code>/rectangle/200/200</code></p>
+                </div>
+                <div class="api-preview">
+                    <img src="/rectangle/200/200" alt="Grid Preview">
+                </div>
+            </div>
+        </div>
     </section>
 
     <section id="geometry">
         <h2>Advanced Geometry</h2>
-
+        <div class="api-card">
+            <div class="api-header">
+                <span><span class="method">GET</span><span class="path">/polygon/{sideCount}/</span></span>
+            </div>
+            <div class="api-body">
+                <div class="api-info">
+                    <p>Generates a specific polygon. Try 3 for a triangle, 8 for an octagon.</p>
+                    <code>/polygon/8/</code>
+                </div>
+                <div class="api-preview">
+                    <img src="/polygon/8" alt="Polygon Preview">
+                </div>
+            </div>
+        </div>
         <div class="api-card">
             <div class="api-header">
                 <span><span class="method">GET</span><span class="path">/polygon/{sideCount}/{radius}</span></span>
@@ -136,7 +167,7 @@
                     <code>/polygon/6/80</code>
                 </div>
                 <div class="api-preview">
-                    <img src="/polygon/6/50" alt="Polygon Preview">
+                    <img src="/polygon/6/80" alt="Polygon Preview">
                 </div>
             </div>
         </div>

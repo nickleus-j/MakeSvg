@@ -132,7 +132,7 @@ public class SvgGenerator
 
     public string GenerateOnionCirclesSvg(int layers, int maxRadius)
     {
-        return BuildSvg(maxRadius * 20, maxRadius * 20, svg =>
+        return BuildSvg(maxRadius * 2+5, maxRadius * 2+5, svg =>
         {
             // Fixed potential divide-by-zero/infinite loop if layers > maxRadius
             int decrement = Math.Max(1, maxRadius >= layers ? maxRadius / layers : layers / maxRadius);
@@ -149,7 +149,7 @@ public class SvgGenerator
     public string GeneratePolygonsSvg(int count, int sides, int radius)
     {
         ValidateSides(sides);
-        return BuildSvgWithViewBox("0 0 400 400", svg =>
+        return BuildSvg(radius * 2+5, radius * 2+5, svg =>
         {
             for (int i = 0; i < count; i++)
             {
@@ -161,9 +161,9 @@ public class SvgGenerator
     public string GeneratePolygonSvg(int sides, int radius)
     {
         ValidateSides(sides);
-        return BuildSvgWithViewBox("0 0 400 400", svg =>
+        return BuildSvg(radius * 2+5, radius * 2+5, svg =>
         {
-            string points = GetPolygonPoints(sides, radius, radius / 2, radius + 5);
+            string points = GetPolygonPoints(sides, radius, radius , radius + 5);
             svg.AppendLine($@"<polygon points=""{points}"" fill=""{GetRandomColor()}"" stroke=""#888"" stroke-width=""2""/>");
         });
     }
