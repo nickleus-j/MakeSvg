@@ -66,4 +66,6 @@ app.MapGet("/polygon/{sideCount:int}/{radius:int}", (int sideCount,int radius) =
     Results.Content(svgGen.GeneratePolygonSvg(sideCount,radius),"image/svg+xml; charset=utf-8"));
 app.MapGet("/polygons/{count:int}", (int count) =>
     Results.Content(svgGen.GeneratePolygonsSvg(count, 6, 50),"image/svg+xml; charset=utf-8"));
+app.MapGet("/polygons/{count:int}/{sideCount:int}", (int count,int sideCount) =>
+    Results.Content(svgGen.GeneratePolygonsSvg(count, sideCount, 50),"image/svg+xml; charset=utf-8"));
 app.Run();
