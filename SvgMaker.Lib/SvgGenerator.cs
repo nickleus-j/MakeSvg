@@ -86,15 +86,34 @@ public class SvgGenerator
 
     public string GenerateSvgText(string inputText)
     {
-        int width = 300;
-        int height = 100;
+        // 1. Split text into lines to handle line breaks
+        var lines = inputText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+    
+        // 2. Constants for Monospace font (Courier/Consolas)
+        const int charWidth = 10;   // Approximate width of one character in pixels
+        const int lineHeight = 22;  // Height of one line plus spacing
+        const int padding = 20;     // Padding around the text
+    
+        // 3. Calculate Dimensions
+        int maxChars = lines.Max(l => l.Length);
+        int width = (maxChars * charWidth) + (padding * 2);
+        int height = (lines.Length * lineHeight) + (padding * 2);
 
         return BuildSvg(width, height, svg =>
         {
-            svg.AppendLine($"<rect x='0' y='0' width='{width}' height='{height}' fill='lightgreen' />");
-            svg.AppendLine($@"<text x=""10"" y=""30"" font-family=""Arial"" font-size=""24"" fill=""black"">");
-            svg.AppendLine($"    {System.Security.SecurityElement.Escape(inputText)}");
-            svg.AppendLine("</text>");
+            // Background Rectangle
+            svg.AppendLine($"  <rect width='100%' height='100%' fill='lightgreen' stroke='#222' />");
+
+            // Text Element
+            // 'xml:space=preserve' ensures multiple spaces aren't collapsed
+            svg.AppendLine($"  <text x='{padding}' y='{padding + 15}' font-family='monospace' font-size='16' fill='#111' xml:space='preserve'>");
+    
+            for (int i = 0; i < lines.Length; i++)
+            {
+                // Using tspan for multi-line support
+                svg.AppendLine($"    <tspan x='{padding}' dy='{(i == 0 ? 0 : lineHeight)}'>{lines[i]}</tspan>");
+            }
+            svg.AppendLine("  </text>");
         });
     }
 
