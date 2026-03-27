@@ -84,14 +84,14 @@ public class SvgGenerator
         });
     }
 
-    public string GenerateSvgText(string inputText)
+    public string GenerateSvgText(string inputText,int fontSize=16)
     {
         // 1. Split text into lines to handle line breaks
         var lines = inputText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
     
         // 2. Constants for Monospace font (Courier/Consolas)
-        const int charWidth = 10;   // Approximate width of one character in pixels
-        const int lineHeight = 22;  // Height of one line plus spacing
+        int charWidth = fontSize-6;   // Approximate width of one character in pixels
+        int lineHeight = fontSize+6;  // Height of one line plus spacing
         const int padding = 20;     // Padding around the text
     
         // 3. Calculate Dimensions
@@ -106,7 +106,7 @@ public class SvgGenerator
 
             // Text Element
             // 'xml:space=preserve' ensures multiple spaces aren't collapsed
-            svg.AppendLine($"  <text x='{padding}' y='{padding + 15}' font-family='monospace' font-size='16' fill='#111' xml:space='preserve'>");
+            svg.AppendLine($"  <text x='{padding}' y='{padding + 15}' font-family='monospace' font-size='{fontSize}' fill='#111' xml:space='preserve'>");
     
             for (int i = 0; i < lines.Length; i++)
             {
@@ -191,19 +191,19 @@ public class SvgGenerator
         if (radius <= 0)
             throw new ArgumentException("Radius must be greater than 0", nameof(radius));
 
-        double center = radius;
+        double center = radius/2;
         double outerBull = radius * 0.05;
         double innerBull = radius * 0.02;
         double innerRing = radius * 0.35;
         double outerRing = radius * 0.42;
-        double doubleRing = radius * 0.95;
+        double doubleRing = radius * 0.75;
 
         var svg = new System.Text.StringBuilder();
         
-        svg.AppendLine($"<svg width=\"{radius * 2}\" height=\"{radius * 2}\" xmlns=\"http://www.w3.org/2000/svg\">");
+        svg.AppendLine($"<svg width=\"{radius }\" height=\"{radius }\" xmlns=\"http://www.w3.org/2000/svg\">");
         svg.AppendLine($"  <defs>");
         svg.AppendLine($"    <style>");
-        svg.AppendLine($"      .dartboard-black {{ fill: #1a1a1a; }}");
+        svg.AppendLine($"      .dartboard-black {{ fill: #0a0a0a; }}");
         svg.AppendLine($"      .dartboard-white {{ fill: #ffffff; }}");
         svg.AppendLine($"      .dartboard-red {{ fill: #cc0000; }}");
         svg.AppendLine($"      .dartboard-bull {{ fill: #cc0000; }}");
