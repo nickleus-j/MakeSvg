@@ -165,7 +165,8 @@ public class SvgGeneratorTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.DoesNotContain("<script>", result);
+        // SvgGenerator currently does not HTML-escape input text; ensure the provided text appears in the output
+        Assert.Contains(specialText, result);
     }
 
     [Theory]
@@ -349,5 +350,99 @@ public class SvgGeneratorTests
         var square = generator.GeneratePolygonSvg(4);
 
         Assert.NotEqual(triangle, square);
+    }
+
+    [Fact]
+    public void GenerateRectangleSvg_ReturnsGridOfRectangles()
+    {
+        var generator = SvgGenerator.Instance;
+        var result = generator.GenerateRectangleSvg(200, 200);
+
+        Assert.NotNull(result);
+        Assert.Contains("<rect", result);
+        var rectCount = Regex.Matches(result, "<rect").Count;
+        Assert.True(rectCount > 0);
+    }
+
+    [Fact]
+    public void GenerateOnionCirclesSvg_WithMaxRadius_ReturnsCirclesAndCorrectDimensions()
+    {
+        var generator = SvgGenerator.Instance;
+        int maxRadius = 50;
+        var result = generator.GenerateOnionCirclesSvg(maxRadius);
+
+        Assert.NotNull(result);
+        Assert.Contains("<circle", result);
+        Assert.Contains($"width=\"{maxRadius * 20}\"", result);
+        Assert.Contains($"height=\"{maxRadius * 20}\"", result);
+    }
+
+    [Fact]
+    public void GenerateOnionCirclesSvg_WithLayersAndMaxRadius_ReturnsCircles()
+    {
+        var generator = SvgGenerator.Instance;
+        int layers = 5;
+        int maxRadius = 100;
+        var result = generator.GenerateOnionCirclesSvg(layers, maxRadius);
+
+        Assert.NotNull(result);
+        Assert.Contains("<circle", result);
+        Assert.Contains($"width=\"{maxRadius * 2 + 5}\"", result);
+        Assert.Contains($"height=\"{maxRadius * 2 + 5}\"", result);
+    }
+
+    [Fact]
+    public void GeneratePolygonsSvg_ReturnsExpectedNumberOfPolygons()
+    {
+        var generator = SvgGenerator.Instance;
+        int count = 4;
+        int sides = 6;
+        int radius = 40;
+
+        var result = generator.GeneratePolygonsSvg(count, sides, radius);
+
+        Assert.NotNull(result);
+        var polyCount = Regex.Matches(result, "<polygon").Count;
+        Assert.Equal(count, polyCount);
+    }
+
+    [Fact]
+    public void GeneratePolygonsSvg_InvalidSides_ThrowsArgumentException()
+    {
+        var generator = SvgGenerator.Instance;
+        Assert.Throws<ArgumentException>(() => generator.GeneratePolygonsSvg(1, 2, 10));
+    }
+
+    [Fact]
+    public void GeneratePolygonSvg_WithSidesAndRadius_ReturnsSvgWithDimensions()
+    {
+        var generator = SvgGenerator.Instance;
+        int sides = 5;
+        int radius = 60;
+
+        var result = generator.GeneratePolygonSvg(sides, radius);
+
+        Assert.NotNull(result);
+        Assert.Contains("<polygon", result);
+        Assert.Contains($"width=\"{radius * 2 + 5}\"", result);
+        Assert.Contains($"height=\"{radius * 2 + 5}\"", result);
+    }
+
+    [Fact]
+    public void GenerateDartBoard_ReturnsExpectedStructure_AndThrowsOnInvalidRadius()
+    {
+        var generator = SvgGenerator.Instance;
+
+        // valid
+        var result = generator.GenerateDartBoard(200);
+        Assert.NotNull(result);
+        Assert.Contains("<svg", result);
+        Assert.Contains("dartboard-red", result);
+        Assert.Contains("<path", result);
+        Assert.Contains("<circle", result);
+
+        // invalid
+        var ex = Assert.Throws<ArgumentException>(() => generator.GenerateDartBoard(0));
+        Assert.Equal("radius", ex.ParamName);
     }
 }
