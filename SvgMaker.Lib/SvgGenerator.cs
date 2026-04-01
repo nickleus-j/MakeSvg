@@ -14,7 +14,7 @@ public class SvgGenerator
     private SvgGenerator() { }
 
     // ==========================================
-    // PUBLIC API (Preserved for your Main class)
+    // PUBLIC Methods
     // ==========================================
 
     public string GenerateRandomSvg(int width, int height)
@@ -213,9 +213,6 @@ public class SvgGenerator
         // Outer circle background
         svg.AppendLine($"  <circle cx=\"{center}\" cy=\"{center}\" r=\"{radius}\" class=\"dartboard-black\"/>");
 
-        // Generate 20 dart board segments
-        int[] scores = { 20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5 };
-        
         for (int i = 0; i < 20; i++)
         {
             double startAngle = (i * 18 - 90) * Math.PI / 180;
@@ -274,7 +271,7 @@ public class SvgGenerator
     }
 
     // ==========================================
-    // PRIVATE HELPER METHODS (Streamlined)
+    // PRIVATE HELPER METHODS
     // ==========================================
 
     private string BuildSvg(int width, int height, Action<StringBuilder> contentBuilder)

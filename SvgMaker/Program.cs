@@ -24,6 +24,21 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/openapi/v1.json", "v1");
     }); // Serves the interactive UI
 }
+if (app.Environment.IsProduction())
+{
+    app.UseExceptionHandler(exceptionHandlerApp =>
+    {
+        exceptionHandlerApp.Run(async httpContext =>
+        {
+            var detailsService = httpContext.RequestServices.GetService<IProblemDetailsService>();
+            if (detailsService == null 
+                || !await detailsService.TryWriteAsync(new() { HttpContext = httpContext }))
+            {
+                await httpContext.Response.WriteAsync("--An error occurred--");
+            }
+        });
+    });
+}
 app.UseHttpsRedirection();
 var svgGen = SvgGenerator.Instance;
 app.MapGet("/random", () => 
