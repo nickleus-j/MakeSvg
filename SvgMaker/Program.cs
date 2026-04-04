@@ -85,4 +85,8 @@ app.MapGet("/polygons/{count:int}", (int count) =>
     Results.Content(svgGen.GeneratePolygonsSvg(count, 6, 50),"image/svg+xml; charset=utf-8"));
 app.MapGet("/polygons/{count:int}/{sideCount:int}", (int count,int sideCount) =>
     Results.Content(svgGen.GeneratePolygonsSvg(count, sideCount, 50),"image/svg+xml; charset=utf-8"));
+app.MapGet("/cube", () =>
+    Results.Content(svgGen.GenerateIsometricCubeSvg(),"image/svg+xml; charset=utf-8"));
+app.MapGet("/cube/{size}", (double size) =>
+    Results.Content(svgGen.GenerateIsometricCubeSvg(size),"image/svg+xml; charset=utf-8"));
 app.Run();

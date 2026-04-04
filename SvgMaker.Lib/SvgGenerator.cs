@@ -246,28 +246,56 @@ public class SvgGenerator
         
         return svg.ToString();
     }
-
-    private void DrawAnnularSegment(System.Text.StringBuilder svg, double center, 
-        double startAngle, double endAngle, double innerRadius, double outerRadius, string cssClass)
+    public string GenerateIsometricCubeSvg(double size = 100, string fillColor = "#34ca80", string strokeColor = "#2c3e50")
     {
-        double x1Inner = center + innerRadius * Math.Cos(startAngle);
-        double y1Inner = center + innerRadius * Math.Sin(startAngle);
-        double x2Inner = center + innerRadius * Math.Cos(endAngle);
-        double y2Inner = center + innerRadius * Math.Sin(endAngle);
-        
-        double x1Outer = center + outerRadius * Math.Cos(startAngle);
-        double y1Outer = center + outerRadius * Math.Sin(startAngle);
-        double x2Outer = center + outerRadius * Math.Cos(endAngle);
-        double y2Outer = center + outerRadius * Math.Sin(endAngle);
-        
-        int largeArc = (endAngle - startAngle) > Math.PI ? 1 : 0;
-        
-        string pathData = $"M {x1Outer} {y1Outer} " +
-                          $"A {outerRadius} {outerRadius} 0 {largeArc} 1 {x2Outer} {y2Outer} " +
-                          $"L {x2Inner} {y2Inner} " +
-                          $"A {innerRadius} {innerRadius} 0 {largeArc} 0 {x1Inner} {y1Inner} Z";
-        
-        svg.AppendLine($"  <path d=\"{pathData}\" class=\"{cssClass}\"/>");
+        // Calculate scale factor based on input size
+        double scale = size / 100.0;
+    
+        // Base coordinates (from your example)
+        double topX1 = 50 * scale;
+        double topY1 = 5 * scale;
+        double topX2 = 90 * scale;
+        double topY2 = 25 * scale;
+        double topX3 = 50 * scale;
+        double topY3 = 45 * scale;
+        double topX4 = 10 * scale;
+        double topY4 = 25 * scale;
+    
+        double leftX1 = 10 * scale;
+        double leftY1 = 25 * scale;
+        double leftX2 = 50 * scale;
+        double leftY2 = 45 * scale;
+        double leftX3 = 50 * scale;
+        double leftY3 = 90 * scale;
+        double leftX4 = 10 * scale;
+        double leftY4 = 70 * scale;
+    
+        double rightX1 = 90 * scale;
+        double rightY1 = 25 * scale;
+        double rightX2 = 90 * scale;
+        double rightY2 = 70 * scale;
+        double rightX3 = 50 * scale;
+        double rightY3 = 90 * scale;
+        double rightX4 = 50 * scale;
+        double rightY4 = 45 * scale;
+    
+        var svg = new StringBuilder();
+    
+        svg.AppendLine($"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {size} {size}\">");
+        svg.AppendLine("  <defs>");
+        svg.AppendLine("    <style>");
+        svg.AppendLine("      .cube-face { stroke: " + strokeColor + "; stroke-width: 2; }");
+        svg.AppendLine("    </style>");
+        svg.AppendLine("  </defs>");
+        svg.AppendLine("  <!-- Top Face -->");
+        svg.AppendLine($"  <polygon points=\"{topX1},{topY1} {topX2},{topY2} {topX3},{topY3} {topX4},{topY4}\" fill=\"{LightenColor(fillColor, 1.2)}\"  stroke-width=\"{2 * scale}\"/>");
+        svg.AppendLine("  <!-- Left Face -->");
+        svg.AppendLine($"  <polygon points=\"{leftX1},{leftY1} {leftX2},{leftY2} {leftX3},{leftY3} {leftX4},{leftY4}\" fill=\"{DarkenColor(fillColor, 0.7)}\"  stroke-width=\"{2 * scale}\"/>");
+        svg.AppendLine("  <!-- Right Face -->");
+        svg.AppendLine($"  <polygon points=\"{rightX1},{rightY1} {rightX2},{rightY2} {rightX3},{rightY3} {rightX4},{rightY4}\" fill=\"{fillColor}\" stroke-width=\"{2 * scale}\"/>");
+        svg.AppendLine("</svg>");
+    
+        return svg.ToString();
     }
 
     // ==========================================
@@ -349,5 +377,57 @@ public class SvgGenerator
         string points = GetPolygonPoints(sides, radius, centerX, centerY);
         
         svg.AppendLine($@"<polygon points=""{points}"" fill=""{GetRandomColor()}"" stroke=""#222"" stroke-width=""2""/>");
+    }
+    private string LightenColor(string hexColor, double factor)
+    {
+        // Parse hex color and lighten it
+        string hex = hexColor.TrimStart('#');
+        int r = int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+        int g = int.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+        int b = int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+        
+        r = Math.Min(255, (int)(r * factor));
+        g = Math.Min(255, (int)(g * factor));
+        b = Math.Min(255, (int)(b * factor));
+        
+        return $"#{r:X2}{g:X2}{b:X2}";
+    }
+
+    private string DarkenColor(string hexColor, double factor)
+    {
+        // Parse hex color and darken it
+        string hex = hexColor.TrimStart('#');
+        int r = int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+        int g = int.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+        int b = int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+        
+        r = (int)(r * factor);
+        g = (int)(g * factor);
+        b = (int)(b * factor);
+        
+        return $"#{r:X2}{g:X2}{b:X2}";
+    }
+
+    private void DrawAnnularSegment(System.Text.StringBuilder svg, double center, 
+        double startAngle, double endAngle, double innerRadius, double outerRadius, string cssClass)
+    {
+        double x1Inner = center + innerRadius * Math.Cos(startAngle);
+        double y1Inner = center + innerRadius * Math.Sin(startAngle);
+        double x2Inner = center + innerRadius * Math.Cos(endAngle);
+        double y2Inner = center + innerRadius * Math.Sin(endAngle);
+        
+        double x1Outer = center + outerRadius * Math.Cos(startAngle);
+        double y1Outer = center + outerRadius * Math.Sin(startAngle);
+        double x2Outer = center + outerRadius * Math.Cos(endAngle);
+        double y2Outer = center + outerRadius * Math.Sin(endAngle);
+        
+        int largeArc = (endAngle - startAngle) > Math.PI ? 1 : 0;
+        
+        string pathData = $"M {x1Outer} {y1Outer} " +
+                          $"A {outerRadius} {outerRadius} 0 {largeArc} 1 {x2Outer} {y2Outer} " +
+                          $"L {x2Inner} {y2Inner} " +
+                          $"A {innerRadius} {innerRadius} 0 {largeArc} 0 {x1Inner} {y1Inner} Z";
+        
+        svg.AppendLine($"  <path d=\"{pathData}\" class=\"{cssClass}\"/>");
     }
 }
