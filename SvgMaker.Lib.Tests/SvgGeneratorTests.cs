@@ -445,4 +445,105 @@ public class SvgGeneratorTests
         var ex = Assert.Throws<ArgumentException>(() => generator.GenerateDartBoard(0));
         Assert.Equal("radius", ex.ParamName);
     }
+    [Fact]
+    public void GenerateIsometricCubeSvg_WithDefaultParameters_ReturnsValidSvg()
+    {
+        var _svgGenerator = SvgGenerator.Instance;
+        // Act
+        string result = _svgGenerator.GenerateIsometricCubeSvg();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        Assert.StartsWith("<svg", result);
+        Assert.EndsWith("</svg>\n", result);
+    }
+
+    [Fact]
+    public void GenerateIsometricCubeSvg_WithDefaultSize_ContainsCorrectViewBox()
+    {
+        var _svgGenerator = SvgGenerator.Instance;
+        // Act
+        string result = _svgGenerator.GenerateIsometricCubeSvg();
+
+        // Assert
+        Assert.Contains("viewBox=\"0 0 100 100\"", result);
+    }
+    [Theory]
+    [InlineData(50)]
+    [InlineData(100)]
+    [InlineData(200)]
+    [InlineData(300)]
+    public void GenerateIsometricCubeSvg_WithVariousSizes_ContainsCorrectViewBox(double size)
+    {
+        // Act
+        string result = SvgGenerator.Instance.GenerateIsometricCubeSvg(size);
+
+        // Assert
+        Assert.Contains($"viewBox=\"0 0 {size} {size}\"", result);
+    }
+
+    [Fact]
+    public void GenerateIsometricCubeSvg_WithSize50_ScalesCoordinatesCorrectly()
+    {
+        // Act
+        string result = SvgGenerator.Instance.GenerateIsometricCubeSvg(50);
+
+        // Assert - Top face should have scaled coordinates (50% of original)
+        Assert.Contains("points=\"25,2.5", result); // topX1=50*0.5, topY1=5*0.5
+    }
+    [Fact]
+    public void GenerateIsometricCubeSvg_WithDefaultColors_ContainsDefaultFillColor()
+    {
+        // Act
+        string result = SvgGenerator.Instance.GenerateIsometricCubeSvg();
+
+        // Assert
+        Assert.Contains("#34ca80", result);
+        Assert.Contains("#2c3e50", result);
+    }
+
+    [Fact]
+    public void GenerateIsometricCubeSvg_WithCustomFillColor_ContainsCustomColor()
+    {
+        var _svgGenerator = SvgGenerator.Instance;
+        // Arrange
+        string customColor = "#ff0000";
+
+        // Act
+        string result = _svgGenerator.GenerateIsometricCubeSvg(fillColor: customColor);
+
+        // Assert
+        Assert.Contains(customColor, result);
+    }
+
+    [Fact]
+    public void GenerateIsometricCubeSvg_WithCustomStrokeColor_ContainsCustomStrokeColor()
+    {
+        var _svgGenerator = SvgGenerator.Instance;
+        // Arrange
+        string customStroke = "#00ff00";
+
+        // Act
+        string result = _svgGenerator.GenerateIsometricCubeSvg(strokeColor: customStroke);
+
+        // Assert
+        Assert.Contains(customStroke, result);
+    }
+
+    [Theory]
+    [InlineData("#ff0000")]
+    [InlineData("#00ff00")]
+    [InlineData("#0000ff")]
+    [InlineData("#ffffff")]
+    [InlineData("#000000")]
+    public void GenerateIsometricCubeSvg_WithVariousColors_ContainsProvidedColors(string color)
+    {
+        var _svgGenerator = SvgGenerator.Instance;
+        // Act
+        string result = _svgGenerator.GenerateIsometricCubeSvg(fillColor: color);
+
+        // Assert
+        Assert.Contains(color, result);
+    }
 }
