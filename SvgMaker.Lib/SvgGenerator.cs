@@ -298,6 +298,14 @@ public class SvgGenerator
         return svg.ToString();
     }
 
+    public string GenerateStar(string fillColor="#FFD700",string strokeColor="#FFA500")
+    {
+        var svg = new StringBuilder();
+        svg.AppendLine($@"<svg width=""100"" height=""100"" viewBox=""0 0 51 48"" xmlns=""http://www.w3.org/2000/svg"">");
+        svg.AppendLine($@"<polygon fill=""{fillColor}"" stroke=""{strokeColor}"" stroke-width=""1"" ");
+        svg.AppendLine("points=\"25,1 31,18 49,18 35,29 40,46 25,36 10,46 15,29 1,18 19,18\"/> </svg>");
+        return svg.ToString();
+    }
     // ==========================================
     // PRIVATE HELPER METHODS
     // ==========================================

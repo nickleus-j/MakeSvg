@@ -89,4 +89,7 @@ app.MapGet("/cube", () =>
     Results.Content(svgGen.GenerateIsometricCubeSvg(),"image/svg+xml; charset=utf-8"));
 app.MapGet("/cube/{size}", (double size) =>
     Results.Content(svgGen.GenerateIsometricCubeSvg(size),"image/svg+xml; charset=utf-8"));
+app.MapGet("/star",()=>Results.Content(svgGen.GenerateStar(),"image/svg+xml"));
+app.MapGet("/star/{fillColor}/{strokeColor}",(string fillColor,string strokeColor)=>
+    Results.Content(svgGen.GenerateStar(fillColor, strokeColor),"image/svg+xml"));
 app.Run();
