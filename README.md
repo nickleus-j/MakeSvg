@@ -11,6 +11,7 @@ API can run via Visual Studio and rider by opening the solution or sln file. Doc
 - Swagger [http://localhost:5001/swagger/index.html](http://localhost:5001/swagger/index.html)
 - random [http://localhost:5001/random/](http://localhost:5001/random/)
 - Text [http://localhost:5001/write/Hello%20World](http://localhost:5001/write/Hello%20World)
+- Introduction (http://localhost:5001)
 
 Replace with localhost:5001 with "127.0.0.1:8080" if running from Docker.
 

@@ -92,4 +92,8 @@ app.MapGet("/cube/{size}", (double size) =>
 app.MapGet("/star",()=>Results.Content(svgGen.GenerateStar(),"image/svg+xml"));
 app.MapGet("/star/{fillColor}/{strokeColor}",(string fillColor,string strokeColor)=>
     Results.Content(svgGen.GenerateStar(fillColor, strokeColor),"image/svg+xml"));
+app.MapGet("/shuriken/",()=>
+    Results.Content(svgGen.GenerateThrowingStar(),"image/svg+xml"));
+app.MapGet("/shuriken/{fillColor}/{strokeColor}",(string fillColor,string strokeColor)=>
+    Results.Content(svgGen.GenerateThrowingStar(fillColor,strokeColor),"image/svg+xml"));
 app.Run();

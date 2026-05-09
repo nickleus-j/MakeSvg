@@ -546,4 +546,51 @@ public class SvgGeneratorTests
         // Assert
         Assert.Contains(color, result);
     }
+    [Fact]
+    public void GenerateStar_ReturnsValidSvgStructure()
+    {
+        // Act
+        var result = SvgGenerator.Instance.GenerateStar();
+
+        // Assert
+        Assert.Contains("<svg", result);
+        Assert.Contains("xmlns=\"http://www.w3.org/2000/svg\"", result);
+        Assert.Contains("<polygon", result);
+        Assert.EndsWith("</svg>", result.Trim());
+    }
+
+    [Fact]
+    public void GenerateStar_UsesDefaultColors_WhenNoArgumentsProvided()
+    {
+        // Act
+        var result = SvgGenerator.Instance.GenerateStar();
+
+        // Assert
+        Assert.Contains("fill=\"#FFD700\"", result);
+        Assert.Contains("stroke=\"#FFA500\"", result);
+    }
+
+    [Theory]
+    [InlineData("#FF0000", "#000000")]
+    [InlineData("red", "blue")]
+    public void GenerateStar_AppliesCustomColors(string fill, string stroke)
+    {
+        // Act
+        var result = SvgGenerator.Instance.GenerateStar(fill, stroke);
+
+        // Assert
+        Assert.Contains($"fill=\"{fill}\"", result);
+        Assert.Contains($"stroke=\"{stroke}\"", result);
+    }
+
+    [Fact]
+    public void GenerateStar_ContainsCorrectPointsAttribute()
+    {
+        // Act
+        var result = SvgGenerator.Instance.GenerateStar();
+
+        // Assert
+        string expectedPoints = "points=\"25,1 31,18 49,18 35,29 40,46 25,36 10,46 15,29 1,18 19,18\"";
+        Assert.Contains(expectedPoints, result);
+    }
 }

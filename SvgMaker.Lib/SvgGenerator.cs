@@ -298,6 +298,14 @@ public class SvgGenerator
         return svg.ToString();
     }
 
+    public string GenerateThrowingStar(string fillColor="#303330",string holeColor="#FFFFFF")
+    {
+        var svg = new StringBuilder();
+        svg.AppendLine($@"<svg viewBox=""0 0 100 100"" xmlns=""http://www.w3.org/2000/svg"">");
+        svg.AppendLine($@"<path d=""M50 5 L65 40 L95 50 L65 60 L50 95 L35 60 L5 50 L35 40 Z"" fill=""{fillColor}"" stroke-width=""1""/>");
+        svg.AppendLine($"<circle cx=\"50\" cy=\"50\" r=\"12\" fill=\"{holeColor}\" /> </svg>");
+        return svg.ToString();
+    }
     public string GenerateStar(string fillColor="#FFD700",string strokeColor="#FFA500")
     {
         var svg = new StringBuilder();
