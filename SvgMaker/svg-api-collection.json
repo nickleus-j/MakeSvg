@@ -1,0 +1,166 @@
+{
+  "info": {
+    "name": "Minimal SVG Generator API Tests",
+    "description": "Tests for the ASP.NET 10 SVG generation API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5001",
+      "type": "string"
+    }
+  ],
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test(\"Status code is 200\", function () {",
+          "    pm.response.to.have.status(200);",
+          "});",
+          "",
+          "pm.test(\"Content-Type is image/svg+xml\", function () {",
+          "    pm.response.to.have.header(\"Content-Type\");",
+          "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"image/svg+xml\");",
+          "});",
+          "",
+          "pm.test(\"Response body contains standard SVG tag\", function () {",
+          "    pm.expect(pm.response.text()).to.include(\"<svg\");",
+          "});"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Random Generation",
+      "item": [
+        {
+          "name": "Get Random SVG (Default Dimensions)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/random"
+          }
+        },
+        {
+          "name": "Get Random SVG (Custom Dimensions)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/random/200/200"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Shapes & Grids",
+      "item": [
+        {
+          "name": "Get Structured Grid",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/grid/200/200"
+          }
+        },
+        {
+          "name": "Get Random Circles",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/circles/150/150"
+          }
+        },
+        {
+          "name": "Get Structured Rectangle",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/rectangle/200/200"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Advanced Geometry",
+      "item": [
+        {
+          "name": "Get Specific Polygon (Base)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/polygon/8"
+          }
+        },
+        {
+          "name": "Get Specific Polygon (With Radius)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/polygon/6/80"
+          }
+        },
+        {
+          "name": "Get Multiple Polygons",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/polygons/4/6"
+          }
+        },
+        {
+          "name": "Get Concentric Onion Circles",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/onion/12"
+          }
+        },
+        {
+          "name": "Get Star (Default Color)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/star"
+          }
+        },
+        {
+          "name": "Get Star (Custom Hex Colors)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/star/%235599AA/%23220011"
+          }
+        },
+        {
+          "name": "Get Shuriken (Named Colors)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/shuriken/seagreen/tan"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Utilities",
+      "item": [
+        {
+          "name": "Generate QR Code",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/qr?q=https://google.com",
+              "host": ["{{baseUrl}}"],
+              "path": ["qr"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "https://google.com"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Render Text as SVG",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/write/Hello%20World"
+          }
+        }
+      ]
+    }
+  ]
+}
