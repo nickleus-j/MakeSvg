@@ -314,6 +314,28 @@ public class SvgGenerator
         svg.AppendLine("points=\"25,1 31,18 49,18 35,29 40,46 25,36 10,46 15,29 1,18 19,18\"/> </svg>");
         return svg.ToString();
     }
+    public string CreateTriangleSvg(double angle1Degrees, double angle2Degrees)
+    {
+        // Validate and limit angles
+        const double minAngle = 1;
+        const double maxAngle = 178;
+    
+        if (angle1Degrees < minAngle || angle1Degrees > maxAngle)
+            throw new ArgumentException($"Angle 1 must be between {minAngle} and {maxAngle} degrees");
+    
+        if (angle2Degrees < minAngle || angle2Degrees > maxAngle)
+            throw new ArgumentException($"Angle 2 must be between {minAngle} and {maxAngle} degrees");
+    
+        if (angle1Degrees + angle2Degrees >= 180)
+            throw new ArgumentException("Sum of the two angles must be less than 180 degrees");
+    
+        double angle3Degrees = 180 - angle1Degrees - angle2Degrees;
+    
+        return BuildSvgWithViewBox("0 0 400 400", svg =>
+        {
+            AppendTriangleToSvg(svg, angle1Degrees, angle2Degrees, angle3Degrees);
+        });
+    }
     // ==========================================
     // PRIVATE HELPER METHODS
     // ==========================================
@@ -393,6 +415,29 @@ public class SvgGenerator
         string points = GetPolygonPoints(sides, radius, centerX, centerY);
         
         svg.AppendLine($@"<polygon points=""{points}"" fill=""{GetRandomColor()}"" stroke=""#222"" stroke-width=""2""/>");
+    }
+    private void AppendTriangleToSvg(StringBuilder svg, double angle1, double angle2, double angle3)
+    {
+        // Convert angles to radians
+        double rad1 = angle1 * Math.PI / 180;
+        double rad2 = angle2 * Math.PI / 180;
+        double rad3 = angle3 * Math.PI / 180;
+    
+        // Base vertices
+        double baseLength = 300;
+        double x1 = 50;
+        double y1 = 350;
+        double x2 = x1 + baseLength;
+        double y2 = y1;
+    
+        // Calculate side lengths using Law of Sines: a/sin(A) = b/sin(B) = c/sin(C)
+        double sideB = baseLength * Math.Sin(rad2) / Math.Sin(rad3);
+    
+        // Calculate third vertex position
+        double x3 = x1 + sideB * Math.Cos(rad1);
+        double y3 = y1 - sideB * Math.Sin(rad1);
+    
+        svg.AppendLine($"<polygon points='{x1},{y1} {x2},{y2} {x3},{y3}' fill='{GetRandomColor()}' stroke='black' stroke-width='2' />");
     }
     private string LightenColor(string hexColor, double factor)
     {

@@ -593,4 +593,159 @@ public class SvgGeneratorTests
         string expectedPoints = "points=\"25,1 31,18 49,18 35,29 40,46 25,36 10,46 15,29 1,18 19,18\"";
         Assert.Contains(expectedPoints, result);
     }
+    [Fact]
+    public void CreateTriangleSvg_WithValidAngles_ReturnsValidSvgString()
+    {
+        // Arrange
+        double angle1 = 60;
+        double angle2 = 70;
+
+        // Act
+        string result = SvgGenerator.Instance.CreateTriangleSvg(angle1, angle2);
+
+        // Assert
+        Assert.Contains("<svg", result);
+        Assert.Contains("</svg>", result);
+        Assert.Contains("<polygon", result);
+    }
+
+    [Theory]
+    [InlineData(45, 45)]
+    [InlineData(60, 60)]
+    [InlineData(30, 90)]
+    [InlineData(50, 80)]
+    [InlineData(1, 1)]
+    [InlineData(1, 178)]
+    [InlineData(178, 1)]
+    public void CreateTriangleSvg_WithValidAngleCombinations_ReturnsValidSvg(double angle1, double angle2)
+    {
+        // Act
+        string result = SvgGenerator.Instance.CreateTriangleSvg(angle1, angle2);
+
+        // Assert
+        Assert.Contains("<polygon", result);
+        Assert.Contains("fill=", result);
+        Assert.Contains("stroke='black'", result);
+    }
+
+    [Theory]
+    [InlineData(0, 45)]
+    [InlineData(45, 0)]
+    [InlineData(-10, 50)]
+    [InlineData(50, -10)]
+    public void CreateTriangleSvg_WithAngleLessThanMinimum_ThrowsArgumentException(double angle1, double angle2)
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => SvgGenerator.Instance.CreateTriangleSvg(angle1, angle2));
+    }
+
+    [Theory]
+    [InlineData(179, 45)]
+    [InlineData(45, 179)]
+    [InlineData(200, 50)]
+    [InlineData(50, 200)]
+    public void CreateTriangleSvg_WithAngleGreaterThanMaximum_ThrowsArgumentException(double angle1, double angle2)
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => SvgGenerator.Instance.CreateTriangleSvg(angle1, angle2));
+    }
+
+    [Theory]
+    [InlineData(90, 90)]
+    [InlineData(100, 80)]
+    [InlineData(179, 1)]
+    [InlineData(170, 10)]
+    public void CreateTriangleSvg_WithSumGreaterThanOrEqualTo180_ThrowsArgumentException(double angle1, double angle2)
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => SvgGenerator.Instance.CreateTriangleSvg(angle1, angle2));
+    }
+
+    [Fact]
+    public void CreateTriangleSvg_WithValidAngles_SvgContainsViewBox()
+    {
+        // Arrange
+        double angle1 = 60;
+        double angle2 = 70;
+
+        // Act
+        string result = SvgGenerator.Instance.CreateTriangleSvg(angle1, angle2);
+
+        // Assert
+        Assert.Contains("viewBox=\"0 0 400 400\"", result);
+    }
+
+    [Fact]
+    public void CreateTriangleSvg_WithValidAngles_SvgContainsCorrectNamespace()
+    {
+        // Arrange
+        double angle1 = 60;
+        double angle2 = 70;
+
+        // Act
+        string result = SvgGenerator.Instance.CreateTriangleSvg(angle1, angle2);
+
+        // Assert
+        Assert.Contains("xmlns=\"http://www.w3.org/2000/svg\"", result);
+    }
+
+    [Fact]
+    public void CreateTriangleSvg_WithValidAngles_PolygonContainsThreePoints()
+    {
+        // Arrange
+        double angle1 = 60;
+        double angle2 = 70;
+
+        // Act
+        string result = SvgGenerator.Instance.CreateTriangleSvg(angle1, angle2);
+
+        // Assert
+        var polygonMatch = System.Text.RegularExpressions.Regex.Match(result, @"points='([^']+)'");
+        Assert.True(polygonMatch.Success, "Polygon should have points attribute");
+        
+        var points = polygonMatch.Groups[1].Value.Split(' ');
+        Assert.Equal(3, points.Length);
+    }
+
+    [Fact]
+    public void CreateTriangleSvg_WithValidAngles_ReturnsNonEmptyString()
+    {
+        // Arrange
+        double angle1 = 45;
+        double angle2 = 60;
+
+        // Act
+        string result = SvgGenerator.Instance.CreateTriangleSvg(angle1, angle2);
+
+        // Assert
+        Assert.False(string.IsNullOrWhiteSpace(result));
+        Assert.NotEmpty(result);
+    }
+
+    [Theory]
+    [InlineData(1.5, 45.5)]
+    [InlineData(60.3, 70.7)]
+    [InlineData(89.99, 45.01)]
+    public void CreateTriangleSvg_WithDecimalAngles_ReturnsValidSvg(double angle1, double angle2)
+    {
+        // Act
+        string result = SvgGenerator.Instance.CreateTriangleSvg(angle1, angle2);
+
+        // Assert
+        Assert.Contains("<polygon", result);
+    }
+
+    [Fact]
+    public void CreateTriangleSvg_WithValidAngles_ContainsStrokeWidth()
+    {
+        // Arrange
+        double angle1 = 60;
+        double angle2 = 70;
+
+        // Act
+        string result = SvgGenerator.Instance.CreateTriangleSvg(angle1, angle2);
+
+        // Assert
+        Assert.Contains("stroke-width='2'", result);
+    }
 }

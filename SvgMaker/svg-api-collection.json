@@ -1,54 +1,62 @@
 {
   "info": {
-    "name": "Minimal SVG Generator API Tests",
-    "description": "Tests for the ASP.NET 10 SVG generation API.",
+    "name": "SVG API Tests",
+    "description": "Newman tests for ASP.NET SVG Generator API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:5001",
-      "type": "string"
-    }
-  ],
-  "event": [
-    {
-      "listen": "test",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          "pm.test(\"Status code is 200\", function () {",
-          "    pm.response.to.have.status(200);",
-          "});",
-          "",
-          "pm.test(\"Content-Type is image/svg+xml\", function () {",
-          "    pm.response.to.have.header(\"Content-Type\");",
-          "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"image/svg+xml\");",
-          "});",
-          "",
-          "pm.test(\"Response body contains standard SVG tag\", function () {",
-          "    pm.expect(pm.response.text()).to.include(\"<svg\");",
-          "});"
-        ]
-      }
-    }
-  ],
   "item": [
     {
       "name": "Random Generation",
       "item": [
         {
-          "name": "Get Random SVG (Default Dimensions)",
+          "name": "GET /random - Default",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is SVG content', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('svg');",
+                  "});",
+                  "pm.test('Response body contains SVG tag', function () {",
+                  "    pm.expect(pm.response.text()).to.include('<svg');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/random"
+            "url": "{{base_url}}/random"
           }
         },
         {
-          "name": "Get Random SVG (Custom Dimensions)",
+          "name": "GET /random/{width}/{height}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is SVG content', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('svg');",
+                  "});",
+                  "pm.test('Response contains SVG with correct dimensions', function () {",
+                  "    pm.expect(pm.response.text()).to.include('width=\"200\"');",
+                  "    pm.expect(pm.response.text()).to.include('height=\"200\"');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/random/200/200"
+            "url": "{{base_url}}/random/200/200"
           }
         }
       ]
@@ -57,24 +65,78 @@
       "name": "Shapes & Grids",
       "item": [
         {
-          "name": "Get Structured Grid",
+          "name": "GET /grid/{width}/{height}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is SVG content', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('svg');",
+                  "});",
+                  "pm.test('Grid contains rectangles', function () {",
+                  "    pm.expect(pm.response.text()).to.include('rect');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/grid/200/200"
+            "url": "{{base_url}}/grid/200/200"
           }
         },
         {
-          "name": "Get Random Circles",
+          "name": "GET /circles/{width}/{height}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is SVG content', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('svg');",
+                  "});",
+                  "pm.test('Response contains circles', function () {",
+                  "    pm.expect(pm.response.text()).to.include('circle');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/circles/150/150"
+            "url": "{{base_url}}/circles/150/150"
           }
         },
         {
-          "name": "Get Structured Rectangle",
+          "name": "GET /rectangle/{width}/{height}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is SVG content', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('svg');",
+                  "});",
+                  "pm.test('Response contains rect element', function () {",
+                  "    pm.expect(pm.response.text()).to.include('rect');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/rectangle/200/200"
+            "url": "{{base_url}}/rectangle/300/400"
           }
         }
       ]
@@ -83,52 +145,179 @@
       "name": "Advanced Geometry",
       "item": [
         {
-          "name": "Get Specific Polygon (Base)",
+          "name": "GET /polygon/{sideCount} - Default radius",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is SVG content', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('svg');",
+                  "});",
+                  "pm.test('Response contains polygon path', function () {",
+                  "    pm.expect(pm.response.text()).to.include('polygon');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/polygon/8"
+            "url": "{{base_url}}/polygon/8/"
           }
         },
         {
-          "name": "Get Specific Polygon (With Radius)",
+          "name": "GET /polygon/{sideCount}/{radius}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is SVG content', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('svg');",
+                  "});",
+                  "pm.test('Response contains polygon with custom radius', function () {",
+                  "    pm.expect(pm.response.text()).to.include('polygon');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/polygon/6/80"
+            "url": "{{base_url}}/polygon/6/80"
           }
         },
         {
-          "name": "Get Multiple Polygons",
+          "name": "GET /polygons/{count}/{sideCount}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is SVG content', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('svg');",
+                  "});",
+                  "pm.test('Response contains multiple polygons', function () {",
+                  "    var count = (pm.response.text().match(/polygon/g) || []).length;",
+                  "    pm.expect(count).to.be.at.least(1);",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/polygons/4/6"
+            "url": "{{base_url}}/polygons/4/6/"
           }
         },
         {
-          "name": "Get Concentric Onion Circles",
+          "name": "GET /onion/{layers}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is SVG content', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('svg');",
+                  "});",
+                  "pm.test('Response contains circles for onion layers', function () {",
+                  "    pm.expect(pm.response.text()).to.include('circle');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/onion/12"
+            "url": "{{base_url}}/onion/10"
           }
         },
         {
-          "name": "Get Star (Default Color)",
+          "name": "GET /star - Default",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is SVG content', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('svg');",
+                  "});",
+                  "pm.test('Response contains star polygon', function () {",
+                  "    pm.expect(pm.response.text()).to.include('polygon');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/star"
+            "url": "{{base_url}}/star"
           }
         },
         {
-          "name": "Get Star (Custom Hex Colors)",
+          "name": "GET /star/{fillColor}/{strokeColor}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is SVG content', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('svg');",
+                  "});",
+                  "pm.test('Response contains star with custom colors', function () {",
+                  "    pm.expect(pm.response.text()).to.include('polygon');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/star/%235599AA/%23220011"
+            "url": "{{base_url}}/star/%235599AA/%23220011"
           }
         },
         {
-          "name": "Get Shuriken (Named Colors)",
+          "name": "GET /shuriken/{fillColor}/{strokeColor}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is SVG content', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('svg');",
+                  "});",
+                  "pm.test('Response contains shuriken shape', function () {",
+                  "    pm.expect(pm.response.text()).to.include('<svg');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/shuriken/seagreen/tan"
+            "url": "{{base_url}}/shuriken/seagreen/tan"
           }
         }
       ]
@@ -137,30 +326,63 @@
       "name": "Utilities",
       "item": [
         {
-          "name": "Generate QR Code",
+          "name": "GET /qr?q={url}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is SVG content', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('svg');",
+                  "});",
+                  "pm.test('Response contains QR code rectangles', function () {",
+                  "    pm.expect(pm.response.text()).to.include('rect');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/qr?q=https://google.com",
-              "host": ["{{baseUrl}}"],
-              "path": ["qr"],
-              "query": [
-                {
-                  "key": "q",
-                  "value": "https://google.com"
-                }
-              ]
-            }
+            "url": "{{base_url}}/qr?q=https://google.com"
           }
         },
         {
-          "name": "Render Text as SVG",
+          "name": "GET /write/{text}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is SVG content', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('svg');",
+                  "});",
+                  "pm.test('Response contains text element', function () {",
+                  "    pm.expect(pm.response.text()).to.include('text');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/write/Hello%20World"
+            "url": "{{base_url}}/write/Hello%20World"
           }
         }
       ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5001",
+      "type": "string"
     }
   ]
 }

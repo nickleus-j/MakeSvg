@@ -1,0 +1,11 @@
+{
+  "id": "svg-api-env",
+  "name": "SVG API Environment",
+  "values": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5001",
+      "enabled": true
+    }
+  ]
+}

@@ -68,6 +68,8 @@ app.MapGet("/grid", () =>
 app.MapGet("/grid/{width:int}/{height:int}", (int width, int height) => 
     Results.Content(svgGen.GenerateRectangleSvg(width,height)
         ,"image/svg+xml; charset=utf-8"));
+app.MapGet("/triangle/{angleA:double}/{angleB:double}", (double angleA,double angleB) =>
+    Results.Content(svgGen.CreateTriangleSvg(angleA, angleB),"image/svg+xml; charset=utf-8"));
 app.MapGet("/onion", () => 
     Results.Content(svgGen.GenerateOnionCirclesSvg(100)
         ,"image/svg+xml; charset=utf-8"));
