@@ -376,6 +376,256 @@
           }
         }
       ]
+    },
+    {
+      "name": "GET /cube — default parameters",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', () => {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Content-Type is image/svg+xml', () => {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('image/svg+xml');",
+              "});",
+              "",
+              "const body = pm.response.text();",
+              "",
+              "pm.test('Body starts with <svg tag', () => {",
+              "    pm.expect(body.trim().startsWith('<svg')).to.be.true;",
+              "});",
+              "",
+              "pm.test('Body ends with closing </svg> tag', () => {",
+              "    pm.expect(body.trim().endsWith('</svg>')).to.be.true;",
+              "});",
+              "",
+              "pm.test('Contains xmlns namespace declaration', () => {",
+              "    pm.expect(body).to.include('xmlns=\"http://www.w3.org/2000/svg\"');",
+              "});",
+              "",
+              "pm.test('viewBox is 0 0 100 100 (default size)', () => {",
+              "    pm.expect(body).to.include('viewBox=\"0 0 100 100\"');",
+              "});",
+              "",
+              "pm.test('Contains exactly three polygon elements (3 cube faces)', () => {",
+              "    const polyCount = (body.match(/<polygon/g) || []).length;",
+              "    pm.expect(polyCount).to.equal(3);",
+              "});",
+              "",
+              "pm.test('Contains <defs> with <style> block', () => {",
+              "    pm.expect(body).to.include('<defs>');",
+              "    pm.expect(body).to.include('<style>');",
+              "    pm.expect(body).to.include('.cube-face');",
+              "});",
+              "",
+              "pm.test('Top face uses LightenColor (lighter shade)', () => {",
+              "    pm.expect(body).to.include('<!-- Top Face -->');",
+              "});",
+              "",
+              "pm.test('Left face uses DarkenColor (darker shade)', () => {",
+              "    pm.expect(body).to.include('<!-- Left Face -->');",
+              "});",
+              "",
+              "pm.test('Right face uses base fill color #34ca80', () => {",
+              "    pm.expect(body).to.include('fill=\"#34ca80\"');",
+              "});",
+              "",
+              "pm.test('Default stroke color is #2c3e50', () => {",
+              "    pm.expect(body).to.include('#2c3e50');",
+              "});",
+              "",
+              "pm.test('Default stroke-width is 2 (unscaled)', () => {",
+              "    pm.expect(body).to.include('stroke-width=\"2\"');",
+              "});",
+              "",
+              "pm.test('Response body is non-empty', () => {",
+              "    pm.expect(body.length).to.be.above(0);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/cube",
+          "host": ["{{base_url}}"],
+          "path": ["cube"]
+        }
+      }
+    },
+    {
+      "name": "GET /cube/200 — custom size scales viewBox and coordinates",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', () => {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Content-Type is image/svg+xml', () => {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('image/svg+xml');",
+              "});",
+              "",
+              "const body = pm.response.text();",
+              "",
+              "pm.test('viewBox reflects custom size 0 0 200 200', () => {",
+              "    pm.expect(body).to.include('viewBox=\"0 0 200 200\"');",
+              "});",
+              "",
+              "pm.test('Stroke-width is scaled (2 * 2.0 = 4)', () => {",
+              "    pm.expect(body).to.include('stroke-width=\"4\"');",
+              "});",
+              "",
+              "pm.test('Contains three polygon elements', () => {",
+              "    const polyCount = (body.match(/<polygon/g) || []).length;",
+              "    pm.expect(polyCount).to.equal(3);",
+              "});",
+              "",
+              "pm.test('Contains svg namespace and closing tag', () => {",
+              "    pm.expect(body).to.include('xmlns=\"http://www.w3.org/2000/svg\"');",
+              "    pm.expect(body.trim().endsWith('</svg>')).to.be.true;",
+              "});",
+              "",
+              "// Verify coordinate scaling: original top vertex (50,5) -> (100,10) at size=200",
+              "pm.test('Coordinates are scaled by factor of 2', () => {",
+              "    pm.expect(body).to.include('100,10');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/cube/200",
+          "host": ["{{base_url}}"],
+          "path": ["cube", "200"]
+        }
+      }
+    },
+    {
+      "name": "GET /cube/50 — smaller size produces valid SVG",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', () => {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const body = pm.response.text();",
+              "",
+              "pm.test('viewBox is 0 0 50 50', () => {",
+              "    pm.expect(body).to.include('viewBox=\"0 0 50 50\"');",
+              "});",
+              "",
+              "pm.test('Stroke-width is scaled to 1 (2 * 0.5)', () => {",
+              "    pm.expect(body).to.include('stroke-width=\"1\"');",
+              "});",
+              "",
+              "pm.test('Three polygons present', () => {",
+              "    const polyCount = (body.match(/<polygon/g) || []).length;",
+              "    pm.expect(polyCount).to.equal(3);",
+              "});",
+              "",
+              "pm.test('Valid SVG envelope', () => {",
+              "    pm.expect(body.trim().startsWith('<svg')).to.be.true;",
+              "    pm.expect(body.trim().endsWith('</svg>')).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/cube/50",
+          "host": ["{{base_url}}"],
+          "path": ["cube", "50"]
+        }
+      }
+    },
+    {
+      "name": "GET /cube/300 — larger size produces valid SVG",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', () => {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const body = pm.response.text();",
+              "",
+              "pm.test('viewBox is 0 0 300 300', () => {",
+              "    pm.expect(body).to.include('viewBox=\"0 0 300 300\"');",
+              "});",
+              "",
+              "pm.test('Stroke-width is scaled to 6 (2 * 3.0)', () => {",
+              "    pm.expect(body).to.include('stroke-width=\"6\"');",
+              "});",
+              "",
+              "pm.test('Three polygons present', () => {",
+              "    const polyCount = (body.match(/<polygon/g) || []).length;",
+              "    pm.expect(polyCount).to.equal(3);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/cube/300",
+          "host": ["{{base_url}}"],
+          "path": ["cube", "300"]
+        }
+      }
+    },
+    {
+      "name": "GET /cube — response time under 500ms",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Response time is under 500ms', () => {",
+              "    pm.expect(pm.response.responseTime).to.be.below(500);",
+              "});",
+              "",
+              "pm.test('Status is 200', () => {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/cube",
+          "host": ["{{base_url}}"],
+          "path": ["cube"]
+        }
+      }
     }
   ],
   "variable": [
