@@ -336,6 +336,34 @@ public class SvgGenerator
             AppendTriangleToSvg(svg, angle1Degrees, angle2Degrees, angle3Degrees);
         });
     }
+
+    public string CreatePinballSvg(int width, int height)
+    {
+        return $@"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='{width}' height='{height}'>
+          <defs>
+            <radialGradient id='steel-gradient' cx='30%' cy='30%' r='70%' fx='25%' fy='25%'>
+              <stop offset='0%' stop-color='#ffffff'/>
+              <stop offset='15%' stop-color='#e2e8ea'/>
+              <stop offset='50%' stop-color='#8a9299'/>
+              <stop offset='85%' stop-color='#40474d'/>
+              <stop offset='100%' stop-color='#1a1d21'/>
+            </radialGradient>
+
+            <linearGradient id='reflection-fade' x1='0%' y1='0%' x2='0%' y2='100%'>
+              <stop offset='0%' stop-color='#ffffff' stop-opacity='0.8'/>
+              <stop offset='100%' stop-color='#ffffff' stop-opacity='0'/>
+            </linearGradient>
+            <filter id='shadow-blur'>
+              <feGaussianBlur stdDeviation='3'/>
+            </filter>
+          </defs>
+
+          <ellipse cx='55' cy='85' rx='35' ry='10' fill='rgba(0,0,0,0.5)' filter='url(#shadow-blur)'/>
+
+          <circle cx='50' cy='50' r='45' fill='url(#steel-gradient)'/>
+          <path d='M 15 40 A 35 35 0 0 1 75 20 A 45 45 0 0 0 15 40 Z' fill='url(#reflection-fade)'/>
+        </svg>";
+    }
     // ==========================================
     // PRIVATE HELPER METHODS
     // ==========================================
