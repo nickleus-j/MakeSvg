@@ -73,6 +73,8 @@ app.MapGet("/triangle/{angleA:double}/{angleB:double}", (double angleA,double an
 app.MapGet("/onion", () => 
     Results.Content(svgGen.GenerateOnionCirclesSvg(100)
         ,"image/svg+xml; charset=utf-8"));
+app.MapGet("/pie", () => Results.Content(svgGen.GenerateColoredPieChart(3), "image/svg+xml; charset=utf-8"));
+app.MapGet("/pie/{slices:int}", (int slices) => Results.Content(svgGen.GenerateColoredPieChart(slices), "image/svg+xml; charset=utf-8"));
 app.MapGet("/onion/{layers:int}", (int layers) => 
     Results.Content(svgGen.GenerateOnionCirclesSvg(layers,150)
         ,"image/svg+xml; charset=utf-8"));

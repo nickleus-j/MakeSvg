@@ -364,6 +364,45 @@ public class SvgGenerator
           <path d='M 15 40 A 35 35 0 0 1 75 20 A 45 45 0 0 0 15 40 Z' fill='url(#reflection-fade)'/>
         </svg>";
     }
+    public string GenerateColoredPieChart(int slices)
+    {
+        if (slices < 1 || slices > 12)
+            return GenerateSvgText("Slices must be between 1 and 12.");
+    
+        int size = 400;
+        int center = size / 2;
+        int radius = 150;
+    
+        return BuildSvgWithViewBox($"0 0 {size} {size}", svg =>
+        {
+            double angleStep = 360.0 / slices;
+            double startAngle = -Math.PI / 2; // Start from top
+        
+            for (int i = 0; i < slices; i++)
+            {
+                double endAngle = startAngle + (angleStep * Math.PI / 180.0);
+            
+                // Calculate start and end points on the circle
+                double x1 = center + radius * Math.Cos(startAngle);
+                double y1 = center + radius * Math.Sin(startAngle);
+                double x2 = center + radius * Math.Cos(endAngle);
+                double y2 = center + radius * Math.Sin(endAngle);
+            
+                // Large arc flag for SVG arc command
+                int largeArc = angleStep > 180 ? 1 : 0;
+            
+                // Create pie slice using SVG path
+                string pathData = $"M {center} {center} " +
+                                  $"L {x1:F2} {y1:F2} " +
+                                  $"A {radius} {radius} 0 {largeArc} 1 {x2:F2} {y2:F2} Z";
+            
+                svg.AppendLine($"<path d=\"{pathData}\" fill=\"{GetRandomColor()}\" stroke=\"white\" stroke-width=\"2\"/>");
+            
+                startAngle = endAngle;
+            }
+        });
+    }
+
     // ==========================================
     // PRIVATE HELPER METHODS
     // ==========================================
