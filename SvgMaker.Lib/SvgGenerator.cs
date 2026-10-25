@@ -371,7 +371,7 @@ public class SvgGenerator
     
         int size = 400;
         int center = size / 2;
-        int radius = 150;
+        int radius = 160;
     
         return BuildSvgWithViewBox($"0 0 {size} {size}", svg =>
         {
@@ -382,21 +382,18 @@ public class SvgGenerator
             {
                 double endAngle = startAngle + (angleStep * Math.PI / 180.0);
             
-                // Calculate start and end points on the circle
                 double x1 = center + radius * Math.Cos(startAngle);
                 double y1 = center + radius * Math.Sin(startAngle);
                 double x2 = center + radius * Math.Cos(endAngle);
                 double y2 = center + radius * Math.Sin(endAngle);
-            
-                // Large arc flag for SVG arc command
+                
                 int largeArc = angleStep > 180 ? 1 : 0;
             
-                // Create pie slice using SVG path
                 string pathData = $"M {center} {center} " +
                                   $"L {x1:F2} {y1:F2} " +
                                   $"A {radius} {radius} 0 {largeArc} 1 {x2:F2} {y2:F2} Z";
             
-                svg.AppendLine($"<path d=\"{pathData}\" fill=\"{GetRandomColor()}\" stroke=\"white\" stroke-width=\"2\"/>");
+                svg.AppendLine($"<path d=\"{pathData}\" fill=\"{GetRandomColor()}\" stroke=\"white\" stroke-width=\"1\"/>");
             
                 startAngle = endAngle;
             }
@@ -481,7 +478,7 @@ public class SvgGenerator
         int centerY = radius + displacementY;
         string points = GetPolygonPoints(sides, radius, centerX, centerY);
         
-        svg.AppendLine($@"<polygon points=""{points}"" fill=""{GetRandomColor()}"" stroke=""#222"" stroke-width=""2""/>");
+        svg.AppendLine($@"<polygon points=""{points}"" fill=""{GetRandomColor()}"" stroke=""#111"" stroke-width=""2""/>");
     }
     private void AppendTriangleToSvg(StringBuilder svg, double angle1, double angle2, double angle3)
     {
