@@ -399,7 +399,37 @@ public class SvgGenerator
             }
         });
     }
-
+    public string BuildClock(DateTime time)
+    {
+        const int size = 400;
+        const int center = size / 2;
+        const int clockRadius = 140;
+        
+        return BuildSvgWithViewBox($"0 0 {size} {size}", svg =>
+        {
+            // Draw clock face background
+            svg.AppendLine($"<circle cx='{center}' cy='{center}' r='{clockRadius}' fill='#ffffff' stroke='#333333' stroke-width='3'/>");
+            
+            // Draw hour markers and numbers
+            DrawHourMarkers(svg, center, clockRadius);
+            
+            // Draw tick marks for minutes
+            DrawMinuteTicks(svg, center, clockRadius);
+            
+            // Calculate angles (convert to radians, offset by -90° to start at 12 o'clock)
+            double secondAngle = (time.Second * 6) - 90;
+            double minuteAngle = (time.Minute * 6 + time.Second * 0.1) - 90;
+            double hourAngle = (time.Hour % 12 * 30 + time.Minute * 0.5) - 90;
+            
+            // Draw clock hands (shortest to longest)
+            DrawClockHand(svg, center, center, hourAngle, 60, 7, "#1a1a1a"); // Hour hand
+            DrawClockHand(svg, center, center, minuteAngle, 100, 5, "#333333"); // Minute hand
+            DrawClockHand(svg, center, center, secondAngle, 110, 2, "#e74c3c"); // Second hand
+            
+            // Draw center circle (cap)
+            svg.AppendLine($"<circle cx='{center}' cy='{center}' r='8' fill='#1a1a1a'/>");
+        });
+    }
     // ==========================================
     // PRIVATE HELPER METHODS
     // ==========================================
@@ -555,4 +585,40 @@ public class SvgGenerator
         
         svg.AppendLine($"  <path d=\"{pathData}\" class=\"{cssClass}\"/>");
     }
+private void DrawHourMarkers(StringBuilder svg, int center, int radius)
+{
+    for (int i = 0; i < 12; i++)
+    {
+        double angle = (i * 30) * Math.PI / 180 - Math.PI / 2; // -90° to start at top
+        double x = center + (radius - 25) * Math.Cos(angle);
+        double y = center + (radius - 25) * Math.Sin(angle);
+        int hour = i == 0 ? 12 : i;
+        svg.AppendLine($"<text x='{x:F1}' y='{y:F1}' text-anchor='middle' dominant-baseline='middle' font-size='20' font-weight='bold' font-family='Arial'>{hour}</text>");
+    }
+}
+
+private void DrawMinuteTicks(StringBuilder svg, int center, int radius)
+{
+    for (int i = 0; i < 60; i++)
+    {
+        if (i % 5 == 0) continue; // Skip hour positions
+        
+        double angle = (i * 6) * Math.PI / 180 - Math.PI / 2;
+        double x1 = center + (radius - 8) * Math.Cos(angle);
+        double y1 = center + (radius - 8) * Math.Sin(angle);
+        double x2 = center + (radius - 3) * Math.Cos(angle);
+        double y2 = center + (radius - 3) * Math.Sin(angle);
+        
+        svg.AppendLine($"<line x1='{x1:F1}' y1='{y1:F1}' x2='{x2:F1}' y2='{y2:F1}' stroke='#999999' stroke-width='1'/>");
+    }
+}
+
+private void DrawClockHand(StringBuilder svg, int centerX, int centerY, double angle, int length, int width, string color)
+{
+    double angleRad = angle * Math.PI / 180;
+    double x2 = centerX + length * Math.Cos(angleRad);
+    double y2 = centerY + length * Math.Sin(angleRad);
+    svg.AppendLine($"<line x1='{centerX}' y1='{centerY}' x2='{x2:F1}' y2='{y2:F1}' stroke='{color}' stroke-width='{width}' stroke-linecap='round'/>");
+}
+
 }

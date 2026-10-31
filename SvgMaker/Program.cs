@@ -100,6 +100,8 @@ app.MapGet("/shuriken/",()=>
     Results.Content(svgGen.GenerateThrowingStar(),"image/svg+xml"));
 app.MapGet("/shuriken/{fillColor}/{strokeColor}",(string fillColor,string strokeColor)=>
     Results.Content(svgGen.GenerateThrowingStar(fillColor,strokeColor),"image/svg+xml"));
+app.MapGet("/clock", () => Results.Content(svgGen.BuildClock(DateTime.Now),"image/svg+xml; charset=utf-8"));
+app.MapGet("/utc", () => Results.Content(svgGen.BuildClock(DateTime.UtcNow),"image/svg+xml; charset=utf-8"));
 app.MapGet("/pinball", () => Results.Content(svgGen.CreatePinballSvg(100,100),"image/svg+xml; charset=utf-8"));
 app.MapGet("/pinball/{radius}", (int radius) => Results.Content(svgGen.CreatePinballSvg(radius*2,radius*2),"image/svg+xml; charset=utf-8"));
 app.Run();
