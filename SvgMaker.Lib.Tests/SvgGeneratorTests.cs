@@ -748,4 +748,263 @@ public class SvgGeneratorTests
         // Assert
         Assert.Contains("stroke-width='2'", result);
     }
+    
+    [Fact]
+    public void BuildClock_ReturnsNonNullString()
+    {
+        // Arrange
+        var time = DateTime.Now;
+
+        // Act
+        string result = SvgGenerator.Instance.BuildClock(time);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+    }
+
+    [Fact]
+    public void BuildClock_ReturnsValidSvgString()
+    {
+        // Arrange
+        var time = DateTime.Now;
+
+        // Act
+        string result = SvgGenerator.Instance.BuildClock(time);
+
+        // Assert
+        Assert.StartsWith("<svg", result);
+        Assert.EndsWith("</svg>", result.TrimEnd());  // Trim whitespace first
+        Assert.Contains("xmlns", result);
+        Assert.Contains("viewBox", result);
+    }
+
+    [Fact]
+    public void BuildClock_ContainsClockFaceCircle()
+    {
+        // Arrange
+        var time = new DateTime(2026, 10, 31, 12, 0, 0);
+
+        // Act
+        string result = SvgGenerator.Instance.BuildClock(time);
+
+        // Assert
+        Assert.Contains("fill='#ffffff'", result);
+        Assert.Contains("stroke='#333333'", result);
+        Assert.Contains("r='140'", result);
+    }
+
+    [Fact]
+    public void BuildClock_ContainsAllHourNumbers()
+    {
+        // Arrange
+        var time = DateTime.Now;
+
+        // Act
+        string result = SvgGenerator.Instance.BuildClock(time);
+
+        // Assert
+        for (int i = 1; i <= 12; i++)
+        {
+            Assert.Contains($">{i}<", result);
+        }
+    }
+
+    [Fact]
+    public void BuildClock_ContainsClockHands()
+    {
+        // Arrange
+        var time = new DateTime(2026, 10, 31, 12, 0, 0);
+
+        // Act
+        string result = SvgGenerator.Instance.BuildClock(time);
+
+        // Assert
+        // Should contain at least 3 line elements for the hands (hour, minute, second)
+        int lineCount = CountOccurrences(result, "<line");
+        Assert.True(lineCount >= 51, $"Expected at least 51 lines, but found {lineCount}");
+        
+        // Verify hand colors
+        Assert.Contains("stroke='#1a1a1a'", result); // Hour hand
+        Assert.Contains("stroke='#333333'", result); // Minute hand
+        Assert.Contains("stroke='#e74c3c'", result); // Second hand
+    }
+
+    [Fact]
+    public void BuildClock_Midnight_PositionsHandsCorrectly()
+    {
+        // Arrange
+        var midnight = new DateTime(2026, 10, 31, 0, 0, 0);
+
+        // Act
+        string result = SvgGenerator.Instance.BuildClock(midnight);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Contains("<line", result);
+        // At midnight, hour hand should point to 12 (angle = -90, so cos(-90°) = 0, sin(-90°) = -1)
+    }
+
+    [Fact]
+    public void BuildClock_Noon_PositionsHandsCorrectly()
+    {
+        // Arrange
+        var noon = new DateTime(2026, 10, 31, 12, 0, 0);
+
+        // Act
+        string result = SvgGenerator.Instance.BuildClock(noon);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Contains("<line", result);
+    }
+
+    [Fact]
+    public void BuildClock_ThreeOClock_PositionsHandsCorrectly()
+    {
+        // Arrange
+        var threeOClock = new DateTime(2026, 10, 31, 15, 0, 0); // 3 PM = 3 O'Clock
+
+        // Act
+        string result = SvgGenerator.Instance.BuildClock(threeOClock);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Contains("<line", result);
+        // At 3 o'clock, hour hand should point to the right (3)
+    }
+
+    [Fact]
+    public void BuildClock_VariousMinutesPositioned()
+    {
+        // Arrange
+        var time15 = new DateTime(2026, 10, 31, 12, 15, 0);
+        var time30 = new DateTime(2026, 10, 31, 12, 30, 0);
+        var time45 = new DateTime(2026, 10, 31, 12, 45, 0);
+
+        // Act
+        string result15 = SvgGenerator.Instance.BuildClock(time15);
+        string result30 = SvgGenerator.Instance.BuildClock(time30);
+        string result45 = SvgGenerator.Instance.BuildClock(time45);
+
+        // Assert - all should produce valid SVG with different minute hand positions
+        Assert.Contains("<svg", result15);
+        Assert.Contains("<svg", result30);
+        Assert.Contains("<svg", result45);
+        
+        // The SVG strings should be different due to different minute hand angles
+        Assert.NotEqual(result15, result30);
+        Assert.NotEqual(result30, result45);
+    }
+
+    [Fact]
+    public void BuildClock_ContainsMinuteTicks()
+    {
+        // Arrange
+        var time = DateTime.Now;
+
+        // Act
+        string result = SvgGenerator.Instance.BuildClock(time);
+
+        // Assert
+        // Should contain minute tick marks (60 total minus 12 hour positions = 48 ticks)
+        Assert.Contains("stroke='#999999'", result);
+        int tickCount = CountOccurrences(result, "stroke='#999999'");
+        Assert.Equal(48, tickCount);
+    }
+
+    [Fact]
+    public void BuildClock_ContainsCenterCircle()
+    {
+        // Arrange
+        var time = DateTime.Now;
+
+        // Act
+        string result = SvgGenerator.Instance.BuildClock(time);
+
+        // Assert
+        Assert.Contains("r='8'", result);
+        Assert.Contains("fill='#1a1a1a'", result);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(6)]
+    [InlineData(11)]
+    [InlineData(23)]
+    public void BuildClock_WithDifferentHours_ReturnsValidSvg(int hour)
+    {
+        // Arrange
+        var time = new DateTime(2026, 10, 31, hour, 30, 45);
+
+        // Act
+        string result = SvgGenerator.Instance.BuildClock(time);
+
+        // Assert
+        Assert.StartsWith("<svg", result);
+        Assert.EndsWith("</svg>", result.TrimEnd());  // Trim whitespace first
+        Assert.Contains("<circle", result);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(15)]
+    [InlineData(30)]
+    [InlineData(45)]
+    [InlineData(59)]
+    public void BuildClock_WithDifferentMinutes_ReturnsValidSvg(int minute)
+    {
+        // Arrange
+        var time = new DateTime(2026, 10, 31, 12, minute, 0);
+
+        // Act
+        string result = SvgGenerator.Instance.BuildClock(time);
+
+        // Assert
+        Assert.StartsWith("<svg", result);
+        Assert.Contains("<line", result);
+    }
+
+    [Fact]
+    public void BuildClock_SecondHandUpdates_WithDifferentSeconds()
+    {
+        // Arrange
+        var time1 = new DateTime(2026, 10, 31, 12, 30, 0);
+        var time2 = new DateTime(2026, 10, 31, 12, 30, 30);
+
+        // Act
+        string result1 = SvgGenerator.Instance.BuildClock(time1);
+        string result2 = SvgGenerator.Instance.BuildClock(time2);
+
+        // Assert
+        Assert.NotEqual(result1, result2);
+    }
+
+    [Fact]
+    public void BuildClock_HandWidthsAreCorrect()
+    {
+        // Arrange
+        var time = DateTime.Now;
+
+        // Act
+        string result = SvgGenerator.Instance.BuildClock(time);
+
+        // Assert
+        Assert.Contains("stroke-width='7'", result); // Hour hand
+        Assert.Contains("stroke-width='5'", result); // Minute hand
+        Assert.Contains("stroke-width='2'", result); // Second hand
+    }
+
+    // Helper method to count occurrences of a substring
+    private int CountOccurrences(string text, string pattern)
+    {
+        int count = 0;
+        int index = 0;
+        while ((index = text.IndexOf(pattern, index)) != -1)
+        {
+            count++;
+            index += pattern.Length;
+        }
+        return count;
+    }
 }
