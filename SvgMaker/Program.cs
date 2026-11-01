@@ -104,4 +104,11 @@ app.MapGet("/clock", () => Results.Content(svgGen.BuildClock(DateTime.Now),"imag
 app.MapGet("/utc", () => Results.Content(svgGen.BuildClock(DateTime.UtcNow),"image/svg+xml; charset=utf-8"));
 app.MapGet("/pinball", () => Results.Content(svgGen.CreatePinballSvg(100,100),"image/svg+xml; charset=utf-8"));
 app.MapGet("/pinball/{radius}", (int radius) => Results.Content(svgGen.CreatePinballSvg(radius*2,radius*2),"image/svg+xml; charset=utf-8"));
+
+app.MapGet("/clockicon", () => {
+    string svg = svgGen.BuildClock(DateTime.Now);
+    byte[] icoBytes = SvgToIcoConverter.SvgStringToIco(svg);
+
+    return Results.File(icoBytes, "image/x-icon", "favicon.ico");
+});
 app.Run();
